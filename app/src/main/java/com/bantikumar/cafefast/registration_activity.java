@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,11 +17,11 @@ public class registration_activity extends AppCompatActivity {
     TextView login_btn;
     TextInputLayout firstname,lastname,email,password,confirm_password;
     Button register_btn;
+    Database db = new Database();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-
         firstname = findViewById(R.id.registration_firstname);
         lastname = findViewById(R.id.registration_lastname);
         email = findViewById(R.id.registration_email);
@@ -33,15 +34,30 @@ public class registration_activity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(registration_activity.this,MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         register_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(validate()) {
-                    Toast.makeText(registration_activity.this,"Register Succedd",Toast.LENGTH_SHORT).show();
+                try {
+                    if (validate()) {
+                        if (db.addUser(new Student(firstname.getEditText().getText().toString(), lastname.getEditText().getText().toString(), email.getEditText().getText().toString(), password.getEditText().getText().toString()))) {
+                            Toast.makeText(registration_activity.this, "Successfully Added", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(registration_activity.this,Dashboard.class);
+                            intent.putExtra("EMAIL",email.getEditText().getText().toString());
+                            startActivity(intent);
+                            finish();
+                        }
+                        else
+                            Toast.makeText(registration_activity.this, Database.msg.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                catch (Exception e){
+                    Toast.makeText(registration_activity.this, Database.msg.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
+
         });
     }
     private boolean validate(){
@@ -50,6 +66,16 @@ public class registration_activity extends AppCompatActivity {
             ch = false;
             email.setErrorEnabled(true);
             email.setError("You can't leave this field empty");
+        }
+        else if(!Patterns.EMAIL_ADDRESS.matcher(email.getEditText().getText().toString()).matches()){
+            ch = false;
+            email.setErrorEnabled(true);
+            email.setError("Please enter a valid email");
+        }
+        else if(!email.getEditText().getText().toString().contains("@nu.edu.pk")){
+            ch = false;
+            email.setErrorEnabled(true);
+            email.setError("Please enter nu email address only");
         }
         else
             email.setErrorEnabled(false);

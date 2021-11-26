@@ -1,6 +1,6 @@
 package com.bantikumar.cafefast;
 
-public class User {
+public class Student {
     String firstname;
     String lastname;
     String email;
@@ -38,7 +38,7 @@ public class User {
         this.password = password;
     }
 
-    public User(String firstname, String lastname, String email, String password) {
+    public Student(String firstname, String lastname, String email, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
