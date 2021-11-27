@@ -12,13 +12,25 @@
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/ic_logout.xml" value="0.2890625" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/ic_profile.xml" value="0.2890625" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/ic_search.xml" value="0.2890625" />
-        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_dashboard.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/ic_track_order.xml" value="0.2890625" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/radio_button_order.xml" value="0.15885416666666666" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/radio_group_background.xml" value="0.15885416666666666" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/shape.xml" value="0.2890625" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/text_color_selector.xml" value="0.15885416666666666" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_dashboard.xml" value="0.33" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_order.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_registration.xml" value="0.25" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_splash_acitivity.xml" value="0.26875" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/cart_frag_layout.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/completed_order_fragment.xml" value="0.14270833333333333" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/drawer_dashboard_layout.xml" value="0.178125" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/favourite_frag_layout.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/home_frag_layout.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/item.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/progress_order_fragment.xml" value="0.14270833333333333" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/toobar.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/menu/bottom_nav_menu.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/menu/drawer_menu_dashboard.xml" value="0.178125" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/menu/menu1.xml" value="0.27291666666666664" />
       </map>

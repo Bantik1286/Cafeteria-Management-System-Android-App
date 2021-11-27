@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CafeFAST">
         <activity
+            android:name=".Order"
+            android:exported="true" />
+        <activity
             android:name=".SplashAcitivity"
             android:exported="true" />
         <activity

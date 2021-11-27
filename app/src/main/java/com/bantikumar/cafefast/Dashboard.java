@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 public class Dashboard extends AppCompatActivity {
@@ -27,6 +29,7 @@ public class Dashboard extends AppCompatActivity {
     ActionBarDrawerToggle toogle;
     NavigationView nav;
     DrawerLayout drawerLayout;
+    BottomNavigationView btmnav;
 
 
     @Override
@@ -46,6 +49,28 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        btmnav = findViewById(R.id.bottom_nav);
+        btmnav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment f=null;
+                switch (item.getItemId())
+                {
+                    case R.id.home_nav:
+                        f = new HomeFragement();
+                        break;
+                    case R.id.favourite_nav:
+                        f = new FavouriteFragement();
+                        break;
+                    case R.id.cart_nav:
+                        f = new CartFragement();
+                        break;
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,f).commit();
+
+                return true;
+            }
+        });
         tbar = findViewById(R.id.toolbar);
         nav = findViewById(R.id.nav);
         tbar.setTitleTextColor(Color.WHITE);
@@ -69,6 +94,9 @@ public class Dashboard extends AppCompatActivity {
                         finish();
                         drawerLayout.closeDrawer(GravityCompat.START);
                         break;
+                    case R.id.order_icon_drawer:
+                        Intent in = new Intent(Dashboard.this,Order.class);
+                        startActivity(in);
                     default:
                         drawerLayout.closeDrawer(GravityCompat.START);
                 }

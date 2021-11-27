@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/home"
-        android:title="home"
-        android:icon="@drawable/ic_home"
+        android:id="@+id/profile_btn_nav"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile"
+        app:showAsAction="ifRoom"
         />
-    <item
-        android:id="@+id/cart_icon"
-        android:title="cart" android:icon="@drawable/ic_cart"
-
+    <item android:title="Cart"
+        android:id="@+id/cart_icon_drawer"
+        android:icon="@drawable/ic_cart"
+        app:showAsAction="ifRoom"
         />
 
-    <item
-        android:id="@+id/profile_icon"
-        android:title="profile" android:icon="@drawable/ic_profile"/>
 
+
+    <item android:title="Order"
+        >
+        <menu>
+            <item android:title="Track order"
+                android:id="@+id/order_icon_drawer"
+                app:showAsAction="ifRoom"
+                android:icon="@drawable/ic_track_order"/>
+            <item android:title="Order history"
+                android:icon="@drawable/ic_baseline_history_24"
+                app:showAsAction="ifRoom"
+                />
+        </menu>
+    </item>
+
+
+
+    <item android:title="Logout"
+        >
+        <menu>
     <item
         android:id="@+id/logout_icon"
         android:icon="@drawable/ic_logout"
         android:title="Logout"/>
-
+        </menu>
+    </item>
 
 
 </menu>
