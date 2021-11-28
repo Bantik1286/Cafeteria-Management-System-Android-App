@@ -97,6 +97,11 @@ public class Dashboard extends AppCompatActivity {
                     case R.id.order_icon_drawer:
                         Intent in = new Intent(Dashboard.this,Order.class);
                         startActivity(in);
+                        break;
+                    case R.id.profile_btn_nav:
+                        Intent in2 = new Intent(Dashboard.this,ProfileActivity.class);
+                        startActivity(in2);
+                        break;
                     default:
                         drawerLayout.closeDrawer(GravityCompat.START);
                 }

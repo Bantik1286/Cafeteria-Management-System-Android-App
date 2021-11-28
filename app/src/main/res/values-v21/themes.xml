@@ -16,5 +16,9 @@
         <item name="android:navigationBarColor">@color/brown</item>
         <item name="android:textColorSecondary">@color/white</item>
     </style>
+    <style name="ratingbar" parent="Theme.AppCompat">
+        <item name="colorControlActivated">#FFA500</item>
+        <item name="colorControlNormal">#FFA500</item>
+    </style>
 
 </resources>
