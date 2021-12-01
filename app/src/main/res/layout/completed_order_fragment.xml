@@ -2,12 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:gravity="center"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Completed Order Fragement"/>
+        android:scrollbars="vertical"
+        android:id="@+id/completed_order_frag_rv"
+        />
 
 
 </LinearLayout>

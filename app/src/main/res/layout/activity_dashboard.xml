@@ -6,6 +6,7 @@
     android:id="@+id/drawer"
     android:layout_height="match_parent"
     tools:openDrawer="start"
+    android:background="@color/white"
     tools:context=".Dashboard">
 
         <LinearLayout
@@ -24,6 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <FrameLayout
+                    android:layout_marginTop="10dp"
                     android:id="@+id/frame_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

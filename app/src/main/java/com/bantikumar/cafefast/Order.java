@@ -10,7 +10,7 @@ import android.widget.RadioGroup;
 public class Order extends AppCompatActivity {
     Toolbar t ;
     RadioGroup r;
-
+    Fragment f;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,11 +21,11 @@ public class Order extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         r=findViewById(R.id.radio_group_order_activity);
-
+        f=new ProgessOrderFragement();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_order_activity,f).commit();
         r.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                Fragment f=null;
                 switch (radioGroup.getCheckedRadioButtonId())
                 {
                     case R.id.in_progress_btn:

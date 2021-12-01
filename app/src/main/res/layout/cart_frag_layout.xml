@@ -2,14 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:weightSum="1"
     android:layout_height="match_parent">
-
-    <TextView
-        android:gravity="center"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Cart"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:id="@+id/cart_recycler_view"
+            />
+    </ScrollView>
+    <Button
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Place Order"
+        android:backgroundTint="@color/brown"
         />
-
-
 </LinearLayout>

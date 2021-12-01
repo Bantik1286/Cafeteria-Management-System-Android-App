@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -30,15 +31,35 @@ public class Dashboard extends AppCompatActivity {
     NavigationView nav;
     DrawerLayout drawerLayout;
     BottomNavigationView btmnav;
+    Fragment f=null;
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu1, menu);
         MenuItem m = menu.findItem(R.id.search_box);
-
         SearchView s = (SearchView)m.getActionView();
         s.setQueryHint("Search items or categories");
+        s.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        s.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(f instanceof HomeFragement)
+                {
+                    HomeFragement.itemAdapter.getFilter().filter(newText);
+                }
+                if(f instanceof FavouriteFragement){
+                    FavouriteFragement.itemAdapter.getFilter().filter(newText);
+                }
+                return false;
+            }
+        });
         s.setIconifiedByDefault(false);
         return super.onCreateOptionsMenu(menu);
     }
@@ -49,11 +70,12 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        f=new HomeFragement();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,f).commit();
         btmnav = findViewById(R.id.bottom_nav);
         btmnav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment f=null;
                 switch (item.getItemId())
                 {
                     case R.id.home_nav:
@@ -72,6 +94,7 @@ public class Dashboard extends AppCompatActivity {
             }
         });
         tbar = findViewById(R.id.toolbar);
+        tbar.setTitle("Dashboard");
         nav = findViewById(R.id.nav);
         tbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(tbar);
@@ -113,5 +136,9 @@ public class Dashboard extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         editor.putString("EMAIL", b.getString("EMAIL"));
         editor.commit();
+
+
+//        ItemDialog i = new ItemDialog();
+//        i.show(getFragmentManager(),"Tag");
     }
 }

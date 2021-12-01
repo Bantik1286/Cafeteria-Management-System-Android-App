@@ -4,11 +4,11 @@
     android:layout_gravity="center"
     android:layout_height="match_parent">
 
-    <TextView
-        android:gravity="center"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Favourite"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:id="@+id/favourite_fragement_recycler_view"
         />
 
 </LinearLayout>

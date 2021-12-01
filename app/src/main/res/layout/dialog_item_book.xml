@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="30dp"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/item_img"
+            android:gravity="center_horizontal"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_dialog_item_name"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:text="Item Name"
+        android:textStyle="bold"
+        android:textSize="30dp"
+       android:layout_marginTop="10dp"
+        />
+    <TextView
+        android:id="@+id/item_dialog_item_price"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:text="Rs. 360"
+        android:textSize="25dp"
+        android:textColor="@color/brown"
+        android:textStyle="bold"
+        />
+
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+    >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/item_dialog_neg_button"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:text="-"
+            android:textColor="@color/white"
+            android:background="@color/brown"
+            />
+
+
+        <TextView
+            android:id="@+id/item_dialog_qty_tv"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/item_dialog_plus_button"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:text="+"
+            android:textColor="@color/white"
+            android:background="@color/brown"
+            />
+
+    </LinearLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/item_dialog_item_requirement_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Additional requirement (Optional)"
+            android:background="@color/white"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+        <Button
+            android:id="@+id/item_dialog_cart_btn"
+            android:textSize="10dp"
+            android:backgroundTint="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add to Cart"/>
+        <Button
+            android:id="@+id/item_dialog_place_order"
+            android:backgroundTint="@color/black"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:textSize="10dp"
+            android:layout_height="wrap_content"
+            android:text="Place Order"/>
+
+    </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
