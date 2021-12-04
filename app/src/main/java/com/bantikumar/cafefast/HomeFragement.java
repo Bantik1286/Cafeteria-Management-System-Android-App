@@ -26,7 +26,7 @@ public class HomeFragement extends Fragment {
     Database db;
     RecyclerView recyclerView;
     Dialog progressDialog;
-    List<Item> i=new ArrayList<>(Dashboard.itemList);
+    public static List<Item> i=new ArrayList<>(Dashboard.itemList);
     public static ItemAdapter itemAdapter;
     @Nullable
     @Override

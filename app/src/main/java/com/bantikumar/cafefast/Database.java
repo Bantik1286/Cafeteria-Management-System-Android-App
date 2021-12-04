@@ -142,16 +142,36 @@ public class Database {
         }
         return false;
     }
-    public List<Item> getAllItems(){
+    public List<Item> getAllItems(String email){
         List<Item> items=null;
+        List<Integer> favouriteItems=null;
         if(isInternetAvailable()){
             if(connect()){
                 String query = "select * from item order by iname;";
+                String favQuery = "select item_id from favourite_item where email='"+email.toString()+"';";
                 try {
                     ResultSet resultSet = st.executeQuery(query);
                     items = new ArrayList<>();
                     while (resultSet.next())
-                    items.add(new Item(resultSet.getInt("item_id"),resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),12,true));
+                    {
+                        int id = resultSet.getInt("item_id");
+                        items.add(new Item(id,resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),12,false));
+                    }
+
+                    favouriteItems = new ArrayList<>();
+                    ResultSet fav = st.executeQuery(favQuery);
+                    while (fav.next())
+                        favouriteItems.add(fav.getInt("item_id"));
+
+                    for(int i=0;i<items.size();i++){
+                        for(int j=0;j<favouriteItems.size();j++){
+                            if(items.get(i).getItemId() == favouriteItems.get(j)){
+                                items.get(i).setFavourite(true);
+                            }
+                        }
+                    }
+
+
                 }
                 catch (Exception e){
                     error = e.getMessage();
@@ -166,5 +186,6 @@ public class Database {
         }
         return items;
     }
+
 
 }
