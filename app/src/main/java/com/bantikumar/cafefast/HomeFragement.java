@@ -25,14 +25,14 @@ public class HomeFragement extends Fragment {
 
     Database db;
     RecyclerView recyclerView;
-    Dialog progressDialog;
-    public static List<Item> i=new ArrayList<>(Dashboard.itemList);
+    public static List<Item> i;
     public static ItemAdapter itemAdapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.home_frag_layout,container,false);
         db=new Database();
+        i=new ArrayList<>(Dashboard.itemList);
         recyclerView=v.findViewById(R.id.item_recycler_view);
         if (i != null) {
             for(int j=0;j<i.size();) {
@@ -41,7 +41,7 @@ public class HomeFragement extends Fragment {
                 else
                     j++;
             }
-            itemAdapter = new ItemAdapter(getContext(), getActivity().getFragmentManager(), i);
+            itemAdapter = new ItemAdapter(getContext(), getActivity().getFragmentManager(), i,Dashboard.email);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(itemAdapter);

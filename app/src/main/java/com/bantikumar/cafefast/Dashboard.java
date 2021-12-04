@@ -45,9 +45,9 @@ public class Dashboard extends AppCompatActivity {
     TextView fullname;
     Bundle bundle;
     public static List<Item> itemList;
-    List<Item> back;
     Dialog progressDialog;
     Database db;
+    public static String email;
 
 
     @Override
@@ -97,6 +97,7 @@ public class Dashboard extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         bundle = getIntent().getExtras();
+        email = bundle.getString("EMAIL");
         bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -185,7 +186,6 @@ public class Dashboard extends AppCompatActivity {
             @Override
             protected Object doInBackground(Object[] objects) {
                 itemList = db.getAllItems(bundle.getString("EMAIL"));
-                back=new ArrayList<>(itemList);
                 return null;
             }
 

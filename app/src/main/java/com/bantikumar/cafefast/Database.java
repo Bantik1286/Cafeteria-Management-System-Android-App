@@ -187,5 +187,49 @@ public class Database {
         return items;
     }
 
+    public boolean addFavouriteItem(String email,int item_id){
+        if(isInternetAvailable()){
+            if(connect()){
+                String query = "insert into favourite_item (email,item_id) values ('"+email+"',"+item_id+");";
+                try {
+                    int n = st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    public  boolean deleteFavourite(String email,int item_id){
+        if(isInternetAvailable()){
+            if(connect()){
+                String query = "delete from favourite_item where email = '"+email+"' and item_id = "+item_id+";";
+                try {
+                    int n = st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
 
 }

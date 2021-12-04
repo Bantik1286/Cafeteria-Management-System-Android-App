@@ -36,7 +36,7 @@ public class FavouriteFragement extends Fragment {
                 j++;
         }
 
-        itemAdapter = new ItemAdapter(getContext(),getActivity().getFragmentManager(),i);
+        itemAdapter = new ItemAdapter(getContext(),getActivity().getFragmentManager(),i,Dashboard.email);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(itemAdapter);

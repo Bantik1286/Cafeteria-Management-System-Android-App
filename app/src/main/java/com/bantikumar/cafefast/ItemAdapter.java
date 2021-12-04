@@ -3,6 +3,7 @@ package com.bantikumar.cafefast;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,12 +30,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
     private List<Item> items;
     private List<Item> itemsComplete;
     FragmentManager fragmentManager;
-
-    public ItemAdapter(Context context,FragmentManager fragmentManager,List<Item> items){
+    Database db;
+    String email;
+    boolean flag;
+    public ItemAdapter(Context context,FragmentManager fragmentManager,List<Item> items,String email){
         this.context = context;
         this.items = items;
         this.itemsComplete = new ArrayList<>(items);
         this.fragmentManager = fragmentManager;
+        db = new Database();
+        this.email = email;
     }
 
     @Override
@@ -88,7 +93,67 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
             holder.favouriteIcon.setColorFilter(Color.parseColor("#Ab0000"));
         else
             holder.favouriteIcon.setColorFilter(Color.parseColor("#ECEDEF"));
+        holder.favouriteIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (items.get(i).isFavourite) {
+                    AsyncTask a = new AsyncTask() {
+                        @Override
+                        protected void onPreExecute() {
+                            Toast.makeText(context, "Please wait we are completeing your operation", Toast.LENGTH_SHORT).show();
+                            flag = false;
+                            super.onPreExecute();
+                        }
 
+                        @Override
+                        protected Object doInBackground(Object[] objects) {
+                            flag = db.deleteFavourite(email,items.get(i).getItemId());
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            if(flag) {
+                                Toast.makeText(context, "Successfully deleted from faourite list", Toast.LENGTH_SHORT).show();
+                                items.get(i).setFavourite(false);
+                                notifyDataSetChanged();
+                            }
+                            else
+                                Toast.makeText(context, db.error, Toast.LENGTH_SHORT).show();
+                            super.onPostExecute(o);
+                        }
+                    }.execute();
+                }
+                else{
+                    AsyncTask a = new AsyncTask() {
+                        @Override
+                        protected void onPreExecute() {
+                            Toast.makeText(context, "Please wait we are completeing your operation", Toast.LENGTH_SHORT).show();
+                            flag = false;
+                            super.onPreExecute();
+                        }
+
+                        @Override
+                        protected Object doInBackground(Object[] objects) {
+                            flag = db.addFavouriteItem(email,items.get(i).getItemId());
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            if(flag) {
+                                Toast.makeText(context, "Successfully added in faourite list", Toast.LENGTH_SHORT).show();
+                                items.get(i).setFavourite(true);
+                                notifyDataSetChanged();
+                            }
+                            else
+                                Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
+                            super.onPostExecute(o);
+                        }
+                    }.execute();
+                }
+            }
+        });
 
     }
 
