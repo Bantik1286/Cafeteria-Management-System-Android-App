@@ -2,7 +2,12 @@ package com.bantikumar.cafefast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -18,6 +23,8 @@ public class registration_activity extends AppCompatActivity {
     TextInputLayout firstname,lastname,email,password,confirm_password;
     Button register_btn;
     Database db = new Database();
+    boolean flag;
+    Dialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,22 +49,54 @@ public class registration_activity extends AppCompatActivity {
             public void onClick(View view) {
                 try {
                     if (validate()) {
-                        if (db.addUser(new Student(firstname.getEditText().getText().toString(), lastname.getEditText().getText().toString(), email.getEditText().getText().toString(), password.getEditText().getText().toString()))) {
-                            Toast.makeText(registration_activity.this, "Successfully Added", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(registration_activity.this,Dashboard.class);
-                            intent.putExtra("EMAIL",email.getEditText().getText().toString());
-                            startActivity(intent);
-                            finish();
-                        }
-                        else
-                            Toast.makeText(registration_activity.this, Database.msg.toString(), Toast.LENGTH_SHORT).show();
+                      AsyncTask asyncTask= new AsyncTask() {
+                          @Override
+                          protected void onPreExecute() {
+                              super.onPreExecute();
+                              progressDialog = new Dialog(registration_activity.this);
+                              progressDialog.setContentView(R.layout.loading_dialog);
+                              progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                              progressDialog.setCancelable(false);
+                              progressDialog.show();
+                          }
+
+                          @Override
+                          protected Object doInBackground(Object[] objects) {
+                              flag = db.addUser(new Student(firstname.getEditText().getText().toString(), lastname.getEditText().getText().toString(), email.getEditText().getText().toString(), password.getEditText().getText().toString()));
+                              return null;
+                          }
+
+                          @Override
+                          protected void onPostExecute(Object o) {
+                              super.onPostExecute(o);
+                              progressDialog.dismiss();
+                              if(flag){
+                                  Intent intent = new Intent(registration_activity.this,Dashboard.class);
+                                  intent.putExtra("EMAIL",email.getEditText().getText().toString());
+                                  intent.putExtra("FIRST_NAME",firstname.getEditText().getText().toString());
+                                  intent.putExtra("LAST_NAME",lastname.getEditText().getText().toString());
+                                  startActivity(intent);
+                                  finish();
+                              }
+                              else{
+                                  if(db.error.toString().equals("User already exists")){
+                                      email.setErrorEnabled(true);
+                                      email.setError("Account already exists");
+                                  }
+                                  else{
+                                      email.setErrorEnabled(false);
+                                      Toast.makeText(registration_activity.this, db.error.toString(), Toast.LENGTH_SHORT).show();
+                                  }
+                              }
+                          }
+                      }.execute();
                     }
                 }
                 catch (Exception e){
-                    Toast.makeText(registration_activity.this, Database.msg.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(registration_activity.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            }
 
+            }
         });
     }
     private boolean validate(){
@@ -98,7 +137,7 @@ public class registration_activity extends AppCompatActivity {
             password.setErrorEnabled(true);
             password.setError("You can't leave this field as empty");
         }
-        else if(password.getEditText().getText().toString().length() >= 6){
+        else if(password.getEditText().getText().toString().length() < 6){
             ch = false;
             password.setErrorEnabled(true);
             password.setError("Password should contain atleast 6 characters");

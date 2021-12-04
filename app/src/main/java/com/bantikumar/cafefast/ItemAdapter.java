@@ -1,7 +1,9 @@
 package com.bantikumar.cafefast;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +28,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
     private Context context;
     private List<Item> items;
     private List<Item> itemsComplete;
+    FragmentManager fragmentManager;
 
-    public ItemAdapter(Context context,List<Item> items){
+    public ItemAdapter(Context context,FragmentManager fragmentManager,List<Item> items){
         this.context = context;
         this.items = items;
         this.itemsComplete = new ArrayList<>(items);
+        this.fragmentManager = fragmentManager;
     }
 
     @Override
@@ -40,14 +44,39 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
 
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         holder.title.setText(items.get(position).getItemName());
         holder.description.setText(items.get(position).getItemDescription());
+        int i=position;
         holder.price.setText("Rs. "+String.valueOf(items.get(position).getPrice()));
-
+        if(items.get(position).getAvailableQuantity()>0) {
+            holder.title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle arg = new Bundle();
+                    arg.putString("NAME", items.get(i).getItemName());
+                    arg.putDouble("PRICE", items.get(i).getPrice());
+                    ItemDialog i = new ItemDialog();
+                    i.setArguments(arg);
+                    i.show(fragmentManager, "Tag");
+                }
+            });
+            holder.description_layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle arg = new Bundle();
+                    arg.putString("NAME", items.get(i).getItemName());
+                    arg.putDouble("PRICE", items.get(i).getPrice());
+                    ItemDialog i = new ItemDialog();
+                    i.setArguments(arg);
+                    i.show(fragmentManager, "Tag");
+                }
+            });
+        }
         if(items.get(position).getAvailableQuantity()==0){
-            holder.layout.setBackgroundColor(Color.parseColor("#8b0000"));
+            holder.layout.setBackgroundColor(Color.parseColor("#eb1b0c"));
             holder.available_qty.setText("N/A");
         }
         else{
@@ -60,12 +89,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
         else
             holder.favouriteIcon.setColorFilter(Color.parseColor("#ECEDEF"));
 
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, items.get(holder.getAdapterPosition()).getItemName() + " selected", Toast.LENGTH_SHORT).show();
-            }
-        });
+
     }
 
     @Override
@@ -113,6 +137,7 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
     CardView cardView;
     LinearLayout layout;
     ImageView favouriteIcon;
+    LinearLayout description_layout;
 
     public ItemViewHolder(View itemView) {
         super(itemView);
@@ -124,6 +149,7 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
         cardView = itemView.findViewById(R.id.card_view_item);
         layout=itemView.findViewById(R.id.background_layout_item_recyclter);
         favouriteIcon = itemView.findViewById(R.id.favourite_icon);
+        description_layout = (LinearLayout)itemView.findViewById(R.id.desciption_layout_item_rv);
     }
 }
 

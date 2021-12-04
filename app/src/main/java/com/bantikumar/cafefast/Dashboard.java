@@ -8,10 +8,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.app.Dialog;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,17 +26,26 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.List;
+
 public class Dashboard extends AppCompatActivity {
-    Toolbar tbar ;
-    ActionBarDrawerToggle toogle;
-    NavigationView nav;
+    Toolbar toolbar ;
+    ActionBarDrawerToggle toggle;
+    NavigationView navigationView;
     DrawerLayout drawerLayout;
-    BottomNavigationView btmnav;
-    Fragment f=null;
+    BottomNavigationView bottomNavigationView;
+    Fragment fragment=null;
+    TextView fullname;
+    Bundle bundle;
+    public static List<Item> itemList;
+    Dialog progressDialog;
+    Database db;
 
 
     @Override
@@ -50,11 +64,11 @@ public class Dashboard extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(f instanceof HomeFragement)
+                if(fragment instanceof HomeFragement)
                 {
                     HomeFragement.itemAdapter.getFilter().filter(newText);
                 }
-                if(f instanceof FavouriteFragement){
+                if(fragment instanceof FavouriteFragement){
                     FavouriteFragement.itemAdapter.getFilter().filter(newText);
                 }
                 return false;
@@ -64,81 +78,117 @@ public class Dashboard extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh_dashboard:
+                startActivity(getIntent());
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        f=new HomeFragement();
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,f).commit();
-        btmnav = findViewById(R.id.bottom_nav);
-        btmnav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        db=new Database();
+        AsyncTask asyncTask = new AsyncTask() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId())
-                {
-                    case R.id.home_nav:
-                        f = new HomeFragement();
-                        break;
-                    case R.id.favourite_nav:
-                        f = new FavouriteFragement();
-                        break;
-                    case R.id.cart_nav:
-                        f = new CartFragement();
-                        break;
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,f).commit();
-
-                return true;
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new Dialog(Dashboard.this);
+                progressDialog.setContentView(R.layout.loading_dialog);
+                progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
             }
-        });
-        tbar = findViewById(R.id.toolbar);
-        tbar.setTitle("Dashboard");
-        nav = findViewById(R.id.nav);
-        tbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(tbar);
-        drawerLayout = findViewById(R.id.drawer);
-        toogle = new ActionBarDrawerToggle(this,drawerLayout,tbar,R.string.open,R.string.close);
-        drawerLayout.addDrawerListener(toogle);
-        toogle.syncState();
-        nav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-
-                    case R.id.logout_icon:
-                        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-                        SharedPreferences.Editor editor = pref.edit();
-                        editor.remove("EMAIL");
-                        editor.commit();
-                        Intent i = new Intent(Dashboard.this,MainActivity.class);
-                        startActivity(i);
-                        finish();
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        break;
-                    case R.id.order_icon_drawer:
-                        Intent in = new Intent(Dashboard.this,Order.class);
-                        startActivity(in);
-                        break;
-                    case R.id.profile_btn_nav:
-                        Intent in2 = new Intent(Dashboard.this,ProfileActivity.class);
-                        startActivity(in2);
-                        break;
-                    default:
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                }
-                return true;
+            protected Object doInBackground(Object[] objects) {
+                itemList = db.getAllItems();
+                return null;
             }
-        });
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
-        SharedPreferences.Editor editor = pref.edit();
-        Bundle b = getIntent().getExtras();
-        editor.putString("EMAIL", b.getString("EMAIL"));
-        editor.commit();
 
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                progressDialog.dismiss();
+                bundle = getIntent().getExtras();
+                fragment=new HomeFragement();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
+                bottomNavigationView = findViewById(R.id.bottom_nav);
+                bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId())
+                        {
+                            case R.id.home_nav:
+                                fragment = new HomeFragement();
+                                break;
+                            case R.id.favourite_nav:
+                                fragment = new FavouriteFragement();
+                                break;
+                            case R.id.cart_nav:
+                                fragment = new CartFragement();
+                                break;
+                        }
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
 
-//        ItemDialog i = new ItemDialog();
-//        i.show(getFragmentManager(),"Tag");
+                        return true;
+                    }
+                });
+                toolbar = findViewById(R.id.toolbar);
+                toolbar.setTitle("Dashboard");
+                navigationView = findViewById(R.id.nav);
+                toolbar.setTitleTextColor(Color.WHITE);
+                setSupportActionBar(toolbar);
+                drawerLayout = findViewById(R.id.drawer);
+                fullname = navigationView.getHeaderView(0).findViewById(R.id.full_name_drawer_header);
+                fullname.setText(bundle.getString("FIRST_NAME") + " "+bundle.getString("LAST_NAME"));
+                toggle = new ActionBarDrawerToggle(Dashboard.this,drawerLayout,toolbar,R.string.open,R.string.close);
+                drawerLayout.addDrawerListener(toggle);
+                toggle.syncState();
+                navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()){
+
+                            case R.id.logout_icon:
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.remove("EMAIL");
+                                editor.remove("FIRST_NAME");
+                                editor.remove("LAST_NAME");
+                                editor.commit();
+                                Intent i = new Intent(Dashboard.this,MainActivity.class);
+                                startActivity(i);
+                                finish();
+                                drawerLayout.closeDrawer(GravityCompat.START);
+                                break;
+                            case R.id.order_icon_drawer:
+                                Intent in = new Intent(Dashboard.this,Order.class);
+                                startActivity(in);
+                                break;
+                            case R.id.profile_btn_nav:
+                                Intent in2 = new Intent(Dashboard.this,ProfileActivity.class);
+                                startActivity(in2);
+                                break;
+                            default:
+                                drawerLayout.closeDrawer(GravityCompat.START);
+                        }
+                        return true;
+                    }
+                });
+
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("EMAIL", bundle.getString("EMAIL"));
+                editor.putString("FIRST_NAME",bundle.getString("FIRST_NAME"));
+                editor.putString("LAST_NAME",bundle.getString("LAST_NAME"));
+                editor.commit();
+            }
+        }.execute();
     }
 }

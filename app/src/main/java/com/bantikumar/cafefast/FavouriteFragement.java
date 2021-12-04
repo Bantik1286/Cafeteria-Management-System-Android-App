@@ -18,6 +18,7 @@ import java.util.List;
 public class FavouriteFragement extends Fragment {
 
     RecyclerView recyclerView;
+    List<Item> i;
     public static ItemAdapter itemAdapter;
 
     @Nullable
@@ -25,13 +26,8 @@ public class FavouriteFragement extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.favourite_frag_layout,container,false);
         recyclerView = v.findViewById(R.id.favourite_fragement_recycler_view);
-        Item item = new Item(1,"Biryani","This is famous",110.0,11,2,true);
-        List<Item> i=new ArrayList<>();
-        i.add(item);
-        item = new Item(1,"Chicken","This is famous",110.0,0,2,false);
-        i.add(item);
-        item = new Item(1,"Korma","This is famous",110.0,11,2,true);
-        i.add(item);
+
+        i=new ArrayList<>(Dashboard.itemList);
 
         for(int j=0;j<i.size();) {
             if (!i.get(j).isFavourite())
@@ -40,7 +36,7 @@ public class FavouriteFragement extends Fragment {
                 j++;
         }
 
-        itemAdapter = new ItemAdapter(getContext(),i);
+        itemAdapter = new ItemAdapter(getContext(),getActivity().getFragmentManager(),i);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(itemAdapter);

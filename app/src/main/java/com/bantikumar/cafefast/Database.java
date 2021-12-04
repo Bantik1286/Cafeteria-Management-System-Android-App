@@ -19,6 +19,8 @@ import java.util.List;
 public class Database {
 
 
+    // TODO : Close all connections
+
     private  final String host = "db.bskteeklvsixrtwmuqbp.supabase.co";
     private  final String database = "postgres";
     private  final int port = 5432;
@@ -29,17 +31,18 @@ public class Database {
     private Connection connection=null;
      private Statement st=null;
      public static String msg= "default";
-    MyProgressDialog p;
     int rowEffected=0;
     boolean check;
 
+
+    public  static  String error="default";
     public Database() {
         this.url = String.format(this.url, this.host, this.port, this.database);
     }
 
 
-    public boolean connect() {
 
+    public boolean connect() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -52,7 +55,7 @@ public class Database {
                 } catch (Exception e) {
                     status = false;
                     System.out.print(e.getMessage());
-                    msg=e.getMessage();
+                    error=e.getMessage();
                     e.printStackTrace();
                 }
             }
@@ -61,7 +64,7 @@ public class Database {
         try {
             thread.join();
         } catch (Exception e) {
-            msg=e.getMessage();
+            error=e.getMessage();
             e.printStackTrace();
             status = false;
         }
@@ -69,97 +72,99 @@ public class Database {
     }
 
 
+
+    public boolean addUser(Student student){
+        if(isInternetAvailable()){
+            if(connect()) {
+                String query = "insert into STUDENTS (first_name,last_name,email,password) VALUES  ('" + student.getFirstname() + "','" + student.getLastname() + "','" + student.getEmail() + "','" + student.getPassword() + "');";
+                String queryCheckAvailablity = "select * from STUDENTS where email = '"+student.getEmail().toString()+"';";
+                try {
+                    ResultSet resultSet = st.executeQuery(queryCheckAvailablity);
+                    if(resultSet.next()){
+                        error = "User already exists";
+                        return false;
+                    }
+                    rowEffected = st.executeUpdate(query);
+                    if(rowEffected>0)
+                        return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage().toString();
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+        return true;
+    }
+
+
+
+    public Student login(String email, String password){
+        Student student = null;
+        if(isInternetAvailable()){
+            if(connect()) {
+                String query = "select * from STUDENTS where email = '"+email+"' and password = '"+password+"';";
+                try {
+                    ResultSet resultSet = st.executeQuery(query);
+                    if(resultSet.next()){
+                        student = new Student(resultSet.getString("first_name"),resultSet.getString("last_name"),resultSet.getString("email"),resultSet.getString("password"));
+                    }
+                    else
+                        error = "Please check your email or password";
+                }
+                catch (Exception e){
+                    error = e.getMessage().toString();
+                    return null;
+                }
+            }
+            else
+                return null;
+        }
+        else{
+            error = "Internet connection not found";
+            return null;
+        }
+        return student;
+    }
+
     public boolean isInternetAvailable() {
         try {
             InetAddress address = InetAddress.getByName("www.google.com");
             return !address.equals("");
         } catch (UnknownHostException e) {
-            msg = e.getMessage();
+            error = e.getMessage();
         }
         return false;
     }
-    public boolean addUser(Student student){
-        check = false;
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String query = "insert into STUDENTS (first_name,last_name,email,password) VALUES  ('" + student.getFirstname() + "','" + student.getLastname() + "','" + student.getEmail() + "','" + student.getPassword() + "');";
-                    rowEffected = 0;
-                    if (isInternetAvailable()) {
-                        if (status && st != null) {
-                            try {
-                                rowEffected = st.executeUpdate(query);
-                                check = true;
-                            } catch (SQLException throwables) {
-                                throwables.printStackTrace();
-                                msg = throwables.getMessage();
-                                check = false;
-                            }
-                        } else {
-                            if (connect())
-                                addUser(student);
-                            else
-                                check = false;
-                        }
-                    } else {
-                        msg = "Please check your internet connection.";
-                        check = false;
-                    }
-                    check = rowEffected != 0;
+    public List<Item> getAllItems(){
+        List<Item> items=null;
+        if(isInternetAvailable()){
+            if(connect()){
+                String query = "select * from item order by iname;";
+                try {
+                    ResultSet resultSet = st.executeQuery(query);
+                    items = new ArrayList<>();
+                    while (resultSet.next())
+                    items.add(new Item(resultSet.getInt("item_id"),resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),12,true));
                 }
-            });
-            t.start();
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        if(!check)
-            msg = "User Already exisits";
-        return check;
-    }
-
-    public boolean Login(String email,String password){
-        check = false;
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String query = "select * from STUDENTS where email='"+email+"' and password='"+password+"';";
-                rowEffected = 0;
-                if (isInternetAvailable()) {
-                    if (status && st != null) {
-                        try {
-                            ResultSet r = st.executeQuery(query);
-                            if(r.next())
-                            check = true;
-                        } catch (SQLException throwables) {
-                            throwables.printStackTrace();
-                            msg = throwables.getMessage();
-                            check = false;
-                        }
-                    } else {
-                        if (connect())
-                            Login(email,password);
-                        else
-                            check = false;
-                    }
-                } else {
-                    msg = "Please check your internet connection.";
-                    check = false;
+                catch (Exception e){
+                    error = e.getMessage();
+                    return null;
                 }
             }
-        });
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-        if(!check)
-            msg = "No such user exists";
-        return check;
+        else
+        {
+            error = "Internet connection not found";
+            return null;
+        }
+        return items;
     }
-
-
 
 }

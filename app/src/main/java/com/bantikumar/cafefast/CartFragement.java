@@ -26,8 +26,8 @@ public class CartFragement extends Fragment {
         View v= inflater.inflate(R.layout.cart_frag_layout,container,false);
 
         List<SelectedItem> i=new ArrayList<>();
-        i.add(new SelectedItem(new Item(1,"Biryani","This is famous",110.0,11,2,false),3));
-        i.add(new SelectedItem(new Item(1,"Korma","This is famous",60.0,11,2,false),2));
+        i.add(new SelectedItem(new Item(1,"Biryani","This is famous",110.0,11,2,false),3,"I dont know"));
+        i.add(new SelectedItem(new Item(1,"Korma","This is famous",60.0,11,2,false),2,"I don't know"));
 
         recyclerView = v.findViewById(R.id.cart_recycler_view);
         itemSelectedAdapter = new ItemSelectedAdapter(getContext(),i);
