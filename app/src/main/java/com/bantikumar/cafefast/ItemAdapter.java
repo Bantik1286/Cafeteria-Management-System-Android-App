@@ -61,8 +61,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
                 @Override
                 public void onClick(View view) {
                     Bundle arg = new Bundle();
+                    arg.putInt("ITEM_ID",items.get(i).getItemId());
                     arg.putString("NAME", items.get(i).getItemName());
                     arg.putDouble("PRICE", items.get(i).getPrice());
+                    arg.putString("EMAIL",email);
                     ItemDialog i = new ItemDialog();
                     i.setArguments(arg);
                     i.show(fragmentManager, "Tag");
@@ -72,8 +74,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
                 @Override
                 public void onClick(View view) {
                     Bundle arg = new Bundle();
+                    arg.putInt("ITEM_ID",items.get(i).getItemId());
                     arg.putString("NAME", items.get(i).getItemName());
                     arg.putDouble("PRICE", items.get(i).getPrice());
+                    arg.putString("EMAIL",email);
                     ItemDialog i = new ItemDialog();
                     i.setArguments(arg);
                     i.show(fragmentManager, "Tag");
@@ -177,7 +181,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements
             else{
                 String searched = charSequence.toString().toLowerCase().trim();
                 for(Item item : itemsComplete){
-                    if(item.getItemName().toLowerCase().contains(searched) ) // TODO : Category search
+                    boolean containtCat = false;
+                    if(item.getCategoryList()!=null) {
+                        for (Category c : item.getCategoryList()) {
+                            if (c.getCategoryName().toLowerCase().trim().contains(searched)) {
+                                containtCat = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(containtCat || item.getItemName().toLowerCase().contains(searched))
                         filterItems.add(item);
                 }
             }
@@ -206,7 +219,6 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
 
     public ItemViewHolder(View itemView) {
         super(itemView);
-
         title = itemView.findViewById(R.id.item_title_tv);
         description = itemView.findViewById(R.id.item_description_tv);
         price = itemView.findViewById(R.id.item_price_tv);

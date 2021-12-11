@@ -4,6 +4,11 @@ public class OrderHelperClass {
     private char status;
     private  int order_id;
     private double total_amount;
+
+    //
+
+
+
     // Date ; : TODO : Date Object
 
 

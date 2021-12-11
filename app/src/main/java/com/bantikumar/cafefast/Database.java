@@ -147,31 +147,29 @@ public class Database {
         List<Integer> favouriteItems=null;
         if(isInternetAvailable()){
             if(connect()){
-                String query = "select * from item order by iname;";
-                String favQuery = "select item_id from favourite_item where email='"+email.toString()+"';";
+
+
+                String query = "select I.item_id, iname, available_qty, rating, price, email from item  I left join favourite_item  F on I.item_id = F.item_id  where email = '"+email+"' or email is null order by iname;";
+
                 try {
+
                     ResultSet resultSet = st.executeQuery(query);
                     items = new ArrayList<>();
                     while (resultSet.next())
                     {
-                        int id = resultSet.getInt("item_id");
-                        items.add(new Item(id,resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),12,false));
+                        items.add(new Item(resultSet.getInt("item_id"),resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),null,resultSet.getString("email")!=null));
                     }
-
-                    favouriteItems = new ArrayList<>();
-                    ResultSet fav = st.executeQuery(favQuery);
-                    while (fav.next())
-                        favouriteItems.add(fav.getInt("item_id"));
-
-                    for(int i=0;i<items.size();i++){
-                        for(int j=0;j<favouriteItems.size();j++){
-                            if(items.get(i).getItemId() == favouriteItems.get(j)){
-                                items.get(i).setFavourite(true);
-                            }
+                    resultSet.close();
+                    for(Item item : items){
+                        List<Category> categories = new ArrayList<>();
+                        String catQuery = "select item_category.cat_id as id, cat_name from item_category inner join category on item_category.cat_id = category.cat_id where item_id = "+item.getItemId()+";";
+                        resultSet = st.executeQuery(catQuery);
+                        while(resultSet.next()){
+                            categories.add(new Category(resultSet.getInt("id"),resultSet.getString("cat_name")));
                         }
+                        item.setCategoryList(categories);
                     }
-
-
+                    
                 }
                 catch (Exception e){
                     error = e.getMessage();
@@ -215,6 +213,9 @@ public class Database {
                 String query = "delete from favourite_item where email = '"+email+"' and item_id = "+item_id+";";
                 try {
                     int n = st.executeUpdate(query);
+                    st.close();
+                    connection.close();
+
                     return true;
                 }
                 catch (Exception e){
@@ -231,5 +232,65 @@ public class Database {
         }
     }
 
+
+    public boolean addToCart(String email, SelectedItem item) {
+        String query = "insert into cart (email, item_id, qty) values ('" + email + "'," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + ");";
+        if (isInternetAvailable()) {
+            if(connect()){
+                try {
+                    int n = st.executeUpdate(query);
+                     return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        } else {
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+
+    // TODO : Check Availablity of items
+    public boolean placeOrder(OrderClass orderClass){
+        String insertOrderTupple = "insert into orders (description,status," +       // TODO : Insert Date
+                "total_price,placed_by) values ('" +
+                orderClass.getRequirement() +"','"+orderClass.getStatus()+"',"+String.valueOf(orderClass.getTotalAmount())+",'"+orderClass.getPlaceBy()+"');";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    st.executeUpdate(insertOrderTupple);
+                    String queryOrderId = "select max(order_id) as id from orders where placed_by = '"+orderClass.getPlaceBy()+"';";
+                    ResultSet s = st.executeQuery(queryOrderId);
+                    if(s.next()) {
+                        int id = s.getInt("id");
+                        s.close();
+                        for (SelectedItem item : orderClass.getItems()) {
+                            String item_tupple = "insert into order_items (order_id,item_id,qty,price) VALUES (" + String.valueOf(id) + "," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + "," + String.valueOf(item.getItem().getPrice() * item.getQuantity()) + ");";
+                            st.close();
+                            st = connection.createStatement();
+                            st.executeUpdate(item_tupple);
+                        }
+                        return true;
+                    }
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+        return false;
+    }
 
 }

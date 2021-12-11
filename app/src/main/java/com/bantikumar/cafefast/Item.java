@@ -1,22 +1,32 @@
 package com.bantikumar.cafefast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Item {
     private int itemId;
     private String itemName;
     private double price;
     String itemDescription;
     private int availableQuantity;
-    private int category_id;
+    List<Category> categoryList;
     boolean isFavourite;
 
-    public Item(int itemId, String itemName,String Descrription, double price, int availableQuantity, int category_id,boolean isFavourite) {
+    public Item(int itemId,double price){
+        this.itemId = itemId;
+        this.price = price;
+    }
+    public Item(int itemId){
+        this.itemId = itemId;
+    }
+    public Item(int itemId, String itemName,String Descrription, double price, int availableQuantity, List<Category> categoryList,boolean isFavourite) {
         this.itemId = itemId;
         this.itemDescription=Descrription;
         this.itemName = itemName;
         this.price = price;
         this.availableQuantity = availableQuantity;
-        this.category_id = category_id;
         this.isFavourite=isFavourite;
+        this.categoryList =categoryList;
     }
 
     public void setItemDescription(String description){
@@ -59,12 +69,12 @@ public class Item {
         this.availableQuantity = availableQuantity;
     }
 
-    public int getCategory_id() {
-        return category_id;
+    public void setCategoryList (List<Category> categoryList){
+        this.categoryList = categoryList;
     }
 
-    public void setCategory_id(int category_id) {
-        this.category_id = category_id;
+    public List<Category> getCategoryList(){
+        return categoryList;
     }
 
     public boolean isFavourite() {

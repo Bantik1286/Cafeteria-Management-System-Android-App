@@ -3,7 +3,6 @@ package com.bantikumar.cafefast;
 public class SelectedItem {
     Item item;
     int quantity;
-    String requirement;
 
     public Item getItem() {
         return item;
@@ -21,8 +20,7 @@ public class SelectedItem {
         this.quantity = quantity;
     }
 
-    public SelectedItem(Item item, int quantity,String requirement) {
-        this.requirement = requirement;
+    public SelectedItem(Item item, int quantity) {
         this.item = item;
         this.quantity = quantity;
     }

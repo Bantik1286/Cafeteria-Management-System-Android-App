@@ -119,8 +119,6 @@ public class Dashboard extends AppCompatActivity {
                 return true;
             }
         });
-
-
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Dashboard");
         navigationView = findViewById(R.id.nav);
@@ -172,6 +170,7 @@ public class Dashboard extends AppCompatActivity {
         editor.commit();
 
         db=new Database();
+
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected void onPreExecute() {
@@ -194,7 +193,10 @@ public class Dashboard extends AppCompatActivity {
                 super.onPostExecute(o);
                 progressDialog.dismiss();
                 fragment=new HomeFragement();
+                if(itemList!=null)
                 getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
+                else
+                    Toast.makeText(Dashboard.this, db.error, Toast.LENGTH_SHORT).show();
             }
         }.execute();
 

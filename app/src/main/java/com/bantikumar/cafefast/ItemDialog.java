@@ -1,6 +1,7 @@
 package com.bantikumar.cafefast;
 
 import android.app.DialogFragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ItemDialog extends DialogFragment {
 
@@ -21,6 +27,12 @@ public class ItemDialog extends DialogFragment {
     TextInputLayout requirement;
     Button plus,minus,addToCart,placeOrder;
     ImageView crossImg;
+    SelectedItem selectedItem;
+    Database db;
+    List<SelectedItem> list;
+    OrderClass order;
+    boolean flag;
+    Bundle arg;
 
 
     @Nullable
@@ -36,7 +48,10 @@ public class ItemDialog extends DialogFragment {
         addToCart = v.findViewById(R.id.item_dialog_cart_btn);
         placeOrder = v.findViewById(R.id.item_dialog_place_order);
         crossImg = v.findViewById(R.id.cross_img_item_dialog);
-        Bundle arg = getArguments();
+        flag = false;
+        db = new Database();
+
+        arg = getArguments();
         itemPrice.setText("Rs."+String.valueOf(arg.getDouble("PRICE",0)));
         itemName.setText(arg.getString("NAME","default name"));
         setCancelable(false);
@@ -63,6 +78,90 @@ public class ItemDialog extends DialogFragment {
             }
         });
 
+        placeOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(qty.getText().toString().equals("0")){
+                    // TODO: Use toast here
+                    Toast.makeText(getActivity(), "Please complete required data", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    try {
+                        AsyncTask a = new AsyncTask() {
+                            @Override
+                            protected void onPreExecute() {
+                                selectedItem = new SelectedItem(new Item(arg.getInt("ITEM_ID"), arg.getDouble("PRICE")), Integer.parseInt(qty.getText().toString()));
+                                list = new ArrayList<>();
+                                list.add(selectedItem);
+                                Date date = new Date();
+                                order = new OrderClass(list, arg.getString("EMAIL"), "I need ASAP", date);
+                                super.onPreExecute();
+                            }
+
+                            @Override
+                            protected Object doInBackground(Object[] objects) {
+                                flag = db.placeOrder(order);
+                                return null;
+                            }
+
+                            @Override
+                            protected void onPostExecute(Object o) {
+                                super.onPostExecute(o);
+                                dismiss();
+                                if (!flag) {
+                                    Toast.makeText(getActivity(), db.error, Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                        a.execute();
+                    }
+                    catch (Exception e){
+                        Toast.makeText(getActivity(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        addToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(qty.getText().toString().equals("0")){
+                    // TODO: Use toast here
+                    Toast.makeText(getActivity(), "Please complete required data", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    try {
+                         new AsyncTask() {
+                            @Override
+                            protected void onPreExecute() {
+                                super.onPreExecute();
+                                flag = false;
+                            }
+
+                            @Override
+                            protected Object doInBackground(Object[] objects) {
+                                flag = db.addToCart(arg.getString("EMAIL"), new SelectedItem(new Item(arg.getInt("ITEM_ID")), Integer.parseInt(qty.getText().toString())));
+                                return null;
+                            }
+
+                            @Override
+                            protected void onPostExecute(Object o) {
+                                super.onPostExecute(o);
+                                dismiss();
+                                if(flag)
+                                Toast.makeText(getActivity(), "Item successfully added in cart", Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(getActivity(), db.error, Toast.LENGTH_SHORT).show();
+                            }
+                        }.execute();
+                    }
+                    catch (Exception e){
+                        Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
         return v;
     }
     @Override
