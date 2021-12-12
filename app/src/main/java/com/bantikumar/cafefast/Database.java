@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Database {
@@ -33,15 +34,18 @@ public class Database {
      public static String msg= "default";
     int rowEffected=0;
     boolean check;
+    String email;
+    public static List<OrderClass> orders;
+    public  static  String error="";
 
-
-    public  static  String error="default";
     public Database() {
         this.url = String.format(this.url, this.host, this.port, this.database);
     }
 
-
-
+    public Database(String email){
+        this.url = String.format(this.url, this.host, this.port, this.database);
+        this.email = email;
+    }
     public boolean connect() {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -147,10 +151,7 @@ public class Database {
         List<Integer> favouriteItems=null;
         if(isInternetAvailable()){
             if(connect()){
-
-
                 String query = "select I.item_id, iname, available_qty, rating, price, email from item  I left join favourite_item  F on I.item_id = F.item_id  where email = '"+email+"' or email is null order by iname;";
-
                 try {
 
                     ResultSet resultSet = st.executeQuery(query);
@@ -169,7 +170,9 @@ public class Database {
                         }
                         item.setCategoryList(categories);
                     }
-                    
+                    resultSet.close();
+                    connection.close();
+                    st.close();
                 }
                 catch (Exception e){
                     error = e.getMessage();
@@ -255,6 +258,9 @@ public class Database {
     }
 
 
+
+
+
     // TODO : Check Availablity of items
     public boolean placeOrder(OrderClass orderClass){
         String insertOrderTupple = "insert into orders (description,status," +       // TODO : Insert Date
@@ -270,11 +276,14 @@ public class Database {
                         int id = s.getInt("id");
                         s.close();
                         for (SelectedItem item : orderClass.getItems()) {
-                            String item_tupple = "insert into order_items (order_id,item_id,qty,price) VALUES (" + String.valueOf(id) + "," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + "," + String.valueOf(item.getItem().getPrice() * item.getQuantity()) + ");";
+                            String item_tupple = "insert into order_items (order_id,item_id,qty,price) VALUES (" + String.valueOf(id) + "," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + "," + String.valueOf(item.getItem().getPrice()) + ");";
                             st.close();
                             st = connection.createStatement();
                             st.executeUpdate(item_tupple);
                         }
+                        s.close();
+                        st.close();
+                        connection.close();
                         return true;
                     }
                 }
@@ -291,6 +300,51 @@ public class Database {
             return false;
         }
         return false;
+    }
+
+
+
+    public boolean getAllOrders(){
+        orders  = null;
+        String query = "select *  from orders where placed_by = '"+email.toString().trim()+"';";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    orders = new ArrayList<OrderClass>();
+                    ResultSet rs = st.executeQuery(query);
+                    while(rs.next()){
+                        char status = rs.getString("status").charAt(0);
+                        if(status=='R')
+                            orders.add(0,new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,null));
+                        else
+                        orders.add(new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,null));
+                    }
+
+                    for(OrderClass order : orders){
+                        String query1 = "select * from order_items where order_id = "+String.valueOf(order.getOrderId())+";";
+                        rs = st.executeQuery(query1);
+                        List<SelectedItem> items = new ArrayList<>();
+                        while(rs.next()){
+                            items.add(new SelectedItem(new Item(rs.getInt("item_id"),(double)rs.getInt("price")),rs.getInt("qty")));
+                        }
+                        order.setItems(items);
+                        rs.close();
+                    }
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
     }
 
 }

@@ -29,7 +29,16 @@ public class OrderClass {
         status='I';
     }
 
-    public int getOrderId() {
+    public OrderClass(int orderId, String placeBy, String requirement, String completedBy, char status, Date start_date){
+        this.orderId = orderId;
+        this.placeBy = placeBy;
+        this.requirement = requirement;
+        this.completedBy = completedBy;
+        this.status = status;
+        this.start_date = start_date;
+    }
+
+        public int getOrderId() {
         return orderId;
     }
 
@@ -88,9 +97,14 @@ public class OrderClass {
 
     public double getTotalAmount(){
         double total = 0;
-        for(SelectedItem item : items){
-            total+=item.getQuantity()*item.getItem().getPrice();
+        if(items!=null) {
+            for (SelectedItem item : items) {
+                total += item.getQuantity() * item.getItem().getPrice();
+            }
         }
         return total;
+    }
+    public OrderClass(){
+
     }
 }

@@ -3,6 +3,15 @@ package com.bantikumar.cafefast;
 public class SelectedItem {
     Item item;
     int quantity;
+    double totalPrice;
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
     public Item getItem() {
         return item;

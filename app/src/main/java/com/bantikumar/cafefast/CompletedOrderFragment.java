@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,20 +19,27 @@ public class CompletedOrderFragment extends Fragment {
 
     RecyclerView recyclerView;
     OrderAdapter orderAdapter;
+    public static  List<OrderClass> list;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.completed_order_fragment,container,false);
-        recyclerView = v.findViewById(R.id.completed_order_frag_rv);
-        List<OrderHelperClass> i = new ArrayList<>();
-        i.add(new OrderHelperClass(342,'C',150.04));
-        i.add(new OrderHelperClass(325,'C',1320.2));
-        i.add(new OrderHelperClass(183,'C',1130));
-        orderAdapter = new OrderAdapter(getContext(),i);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(orderAdapter);
+        View v = inflater.inflate(R.layout.completed_order_fragment, container, false);
+        if (Database.orders != null) {
+            recyclerView = v.findViewById(R.id.completed_order_frag_rv);
+            list = new ArrayList<>(Database.orders);
+            int j = 0;
+            for (j = 0; j < list.size(); ) {
+                if (list.get(j).getStatus() != 'C') {
+                    list.remove(j);
+                } else
+                    j++;
+            }
+                orderAdapter = new OrderAdapter(getContext(), list);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                recyclerView.setLayoutManager(linearLayoutManager);
+                recyclerView.setAdapter(orderAdapter);
+        }
         return v;
     }
 }

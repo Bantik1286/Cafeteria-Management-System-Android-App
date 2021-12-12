@@ -50,6 +50,7 @@ public class Dashboard extends AppCompatActivity {
     public static String email;
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu1, menu);
@@ -149,6 +150,7 @@ public class Dashboard extends AppCompatActivity {
                         break;
                     case R.id.order_icon_drawer:
                         Intent in = new Intent(Dashboard.this,Order.class);
+                        in.putExtra("EMAIL",bundle.getString("EMAIL"));
                         startActivity(in);
                         break;
                     case R.id.profile_btn_nav:
@@ -191,12 +193,12 @@ public class Dashboard extends AppCompatActivity {
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
-                progressDialog.dismiss();
-                fragment=new HomeFragement();
-                if(itemList!=null)
-                getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,fragment).commit();
-                else
-                    Toast.makeText(Dashboard.this, db.error, Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    fragment = new HomeFragement();
+                    if (itemList != null)
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
+                    else
+                        Toast.makeText(Dashboard.this, db.error, Toast.LENGTH_SHORT).show();
             }
         }.execute();
 

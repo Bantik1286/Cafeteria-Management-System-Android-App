@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CafeFAST">
         <activity
+            android:name=".ConfirmOrder"
+            android:exported="true" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="true" />
         <activity
