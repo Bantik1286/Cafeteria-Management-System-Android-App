@@ -16,6 +16,7 @@
             />
     </ScrollView>
     <Button
+        android:id="@+id/cart_frag_place_order_btn"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

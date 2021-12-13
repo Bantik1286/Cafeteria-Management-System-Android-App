@@ -37,7 +37,6 @@ public class Order extends AppCompatActivity {
         r=findViewById(R.id.radio_group_order_activity);
         args = getIntent().getExtras();
         email = args.getString("EMAIL");
-        Toast.makeText(Order.this, email, Toast.LENGTH_SHORT).show();
         db = new Database(args.getString("EMAIL"));
             AsyncTask a = new AsyncTask() {
                 @Override

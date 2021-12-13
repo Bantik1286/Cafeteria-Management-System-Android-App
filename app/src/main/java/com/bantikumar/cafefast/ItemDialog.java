@@ -1,6 +1,9 @@
 package com.bantikumar.cafefast;
 
 import android.app.DialogFragment;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -86,39 +89,44 @@ public class ItemDialog extends DialogFragment {
                     Toast.makeText(getActivity(), "Please complete required data", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    try {
-                        AsyncTask a = new AsyncTask() {
-                            @Override
-                            protected void onPreExecute() {
-                                selectedItem = new SelectedItem(new Item(arg.getInt("ITEM_ID"), arg.getDouble("PRICE")), Integer.parseInt(qty.getText().toString()));
-                                list = new ArrayList<>();
-                                list.add(selectedItem);
-                                Date date = new Date();
-                                order = new OrderClass(list, arg.getString("EMAIL"), "I need ASAP", date);
-                                super.onPreExecute();
-                            }
-
-                            @Override
-                            protected Object doInBackground(Object[] objects) {
-                                flag = db.placeOrder(order);
-                                return null;
-                            }
-
-                            @Override
-                            protected void onPostExecute(Object o) {
-                                super.onPostExecute(o);
-                                dismiss();
-                                if (!flag) {
-                                    Toast.makeText(getActivity(), db.error, Toast.LENGTH_SHORT).show();
-                                } else
-                                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                            }
-                        };
-                        a.execute();
-                    }
-                    catch (Exception e){
-                        Toast.makeText(getActivity(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
-                    }
+                    selectedItem = new SelectedItem(new Item(arg.getInt("ITEM_ID"), arg.getDouble("PRICE"),arg.getString("NAME","default name")), Integer.parseInt(qty.getText().toString()));
+                    list = new ArrayList<>();
+                    list.add(selectedItem);
+                    list.add(selectedItem);
+                    list.add(selectedItem);
+                    list.add(selectedItem);
+                    Date date = new Date();
+                    Dashboard.order = new OrderClass(list, arg.getString("EMAIL"), "I need ASAP", date);
+                    startActivity(new Intent(getActivity(),ConfirmOrder.class));
+                    dismiss();
+//                    try {
+//                        AsyncTask a = new AsyncTask() {
+//                            @Override
+//                            protected void onPreExecute() {
+//                                super.onPreExecute();
+//                            }
+//
+//                            @Override
+//                            protected Object doInBackground(Object[] objects) {
+//                                flag = db.placeOrder(Dashboard.order);
+//                                return null;
+//                            }
+//
+//                            @Override
+//                            protected void onPostExecute(Object o) {
+//                                super.onPostExecute(o);
+//                                dismiss();
+//                                if (!flag) {
+//                                    Toast.makeText(getActivity(), db.error, Toast.LENGTH_SHORT).show();
+//                                } else
+//                                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+//                            }
+//                        };
+//                        a.execute();
+//                    }
+//                    catch (Exception e){
+//                        Toast.makeText(getActivity(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
+//                    }
                 }
             }
         });
@@ -135,6 +143,8 @@ public class ItemDialog extends DialogFragment {
                          new AsyncTask() {
                             @Override
                             protected void onPreExecute() {
+                                addToCart.setBackgroundColor(Color.parseColor("#B4A484"));
+                                addToCart.setClickable(false);
                                 super.onPreExecute();
                                 flag = false;
                             }
@@ -148,6 +158,8 @@ public class ItemDialog extends DialogFragment {
                             @Override
                             protected void onPostExecute(Object o) {
                                 super.onPostExecute(o);
+                                addToCart.setBackgroundColor(Color.parseColor("#C4A484"));
+                                addToCart.setClickable(true);
                                 dismiss();
                                 if(flag)
                                 Toast.makeText(getActivity(), "Item successfully added in cart", Toast.LENGTH_SHORT).show();

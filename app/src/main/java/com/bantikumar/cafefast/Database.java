@@ -36,6 +36,7 @@ public class Database {
     boolean check;
     String email;
     public static List<OrderClass> orders;
+    public static List<SelectedItem> cartItems;
     public  static  String error="";
 
     public Database() {
@@ -338,6 +339,34 @@ public class Database {
                 }
             }
             else {
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    boolean getCartItems(){
+        String query = "select item.item_id, qty, iname,price from item inner join cart on item.item_id = cart.item_id where email = '"+email+"';";
+        if(isInternetAvailable()){
+            cartItems = null;
+            if(connect()){
+                cartItems = new ArrayList<>();
+                try {
+                    ResultSet rs = st.executeQuery(query);
+                    while(rs.next()){
+                        cartItems.add(new SelectedItem(new Item(rs.getInt("item_id"),(double)rs.getInt("price"),rs.getString("iname")),rs.getInt("qty")));
+                    }
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
                 return false;
             }
         }

@@ -22,6 +22,7 @@
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/radio_group_background.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/shape.xml" value="0.2890625" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/drawable/text_color_selector.xml" value="0.15885416666666666" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_confirm_order.xml" value="0.26871794871794874" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_dashboard.xml" value="0.33" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/activity_order.xml" value="0.27291666666666664" />
@@ -32,6 +33,7 @@
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/cart_frag_layout.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/cart_item_recycler_view.xml" value="0.25" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/completed_order_fragment.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/confrm_order_recycler_view.xml" value="0.26871794871794874" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/dialog_item_book.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/drawer_dashboard_layout.xml" value="0.178125" />
         <entry key="..\:/Users/Banti Kumar/AndroidStudioProjects/CafeFAST/app/src/main/res/layout/favourite_frag_layout.xml" value="0.27291666666666664" />

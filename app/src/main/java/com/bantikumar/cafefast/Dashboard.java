@@ -47,6 +47,7 @@ public class Dashboard extends AppCompatActivity {
     public static List<Item> itemList;
     Dialog progressDialog;
     Database db;
+    public static OrderClass order = null;
     public static String email;
 
 
@@ -152,10 +153,12 @@ public class Dashboard extends AppCompatActivity {
                         Intent in = new Intent(Dashboard.this,Order.class);
                         in.putExtra("EMAIL",bundle.getString("EMAIL"));
                         startActivity(in);
+                        drawerLayout.closeDrawer(GravityCompat.START);
                         break;
                     case R.id.profile_btn_nav:
                         Intent in2 = new Intent(Dashboard.this,ProfileActivity.class);
                         startActivity(in2);
+                        drawerLayout.closeDrawer(GravityCompat.START);
                         break;
                     default:
                         drawerLayout.closeDrawer(GravityCompat.START);
@@ -171,12 +174,13 @@ public class Dashboard extends AppCompatActivity {
         editor.putString("LAST_NAME",bundle.getString("LAST_NAME"));
         editor.commit();
 
-        db=new Database();
+        db=new Database(bundle.getString("EMAIL"));
 
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+
                 progressDialog = new Dialog(Dashboard.this);
                 progressDialog.setContentView(R.layout.loading_dialog);
                 progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -187,6 +191,7 @@ public class Dashboard extends AppCompatActivity {
             @Override
             protected Object doInBackground(Object[] objects) {
                 itemList = db.getAllItems(bundle.getString("EMAIL"));
+                db.getCartItems();
                 return null;
             }
 

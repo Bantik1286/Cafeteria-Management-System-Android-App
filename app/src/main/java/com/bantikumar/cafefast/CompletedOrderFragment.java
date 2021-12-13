@@ -30,7 +30,7 @@ public class CompletedOrderFragment extends Fragment {
             list = new ArrayList<>(Database.orders);
             int j = 0;
             for (j = 0; j < list.size(); ) {
-                if (list.get(j).getStatus() != 'C') {
+                if (list.get(j).getStatus() == 'I' || list.get(j).getStatus() == 'R') {
                     list.remove(j);
                 } else
                     j++;

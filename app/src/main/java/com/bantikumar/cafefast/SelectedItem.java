@@ -6,7 +6,7 @@ public class SelectedItem {
     double totalPrice;
 
     public double getTotalPrice() {
-        return totalPrice;
+        return quantity*item.getPrice();
     }
 
     public void setTotalPrice(double totalPrice) {
