@@ -1,6 +1,7 @@
 package com.bantikumar.cafefast;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,10 +53,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(orders.get(i).getItems()!=null)
-                Toast.makeText(context, String.valueOf(orders.get(i).getItems().size()), Toast.LENGTH_SHORT).show();
+                if(orders.get(i).getItems()!=null){
+                    Order.orderDetail = orders.get(i);
+                    context.startActivity(new Intent(context,order_details.class));
+                }
                 else
-                    Toast.makeText(context, "No Items", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "No items found for this order", Toast.LENGTH_SHORT).show();
             }
         });
 

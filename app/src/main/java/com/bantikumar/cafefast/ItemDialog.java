@@ -92,41 +92,11 @@ public class ItemDialog extends DialogFragment {
                     selectedItem = new SelectedItem(new Item(arg.getInt("ITEM_ID"), arg.getDouble("PRICE"),arg.getString("NAME","default name")), Integer.parseInt(qty.getText().toString()));
                     list = new ArrayList<>();
                     list.add(selectedItem);
-                    list.add(selectedItem);
-                    list.add(selectedItem);
-                    list.add(selectedItem);
                     Date date = new Date();
                     Dashboard.order = new OrderClass(list, arg.getString("EMAIL"), "I need ASAP", date);
                     startActivity(new Intent(getActivity(),ConfirmOrder.class));
                     dismiss();
-//                    try {
-//                        AsyncTask a = new AsyncTask() {
-//                            @Override
-//                            protected void onPreExecute() {
-//                                super.onPreExecute();
-//                            }
 //
-//                            @Override
-//                            protected Object doInBackground(Object[] objects) {
-//                                flag = db.placeOrder(Dashboard.order);
-//                                return null;
-//                            }
-//
-//                            @Override
-//                            protected void onPostExecute(Object o) {
-//                                super.onPostExecute(o);
-//                                dismiss();
-//                                if (!flag) {
-//                                    Toast.makeText(getActivity(), db.error, Toast.LENGTH_SHORT).show();
-//                                } else
-//                                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-//                            }
-//                        };
-//                        a.execute();
-//                    }
-//                    catch (Exception e){
-//                        Toast.makeText(getActivity(),e.getMessage().toString(),Toast.LENGTH_SHORT).show();
-//                    }
                 }
             }
         });

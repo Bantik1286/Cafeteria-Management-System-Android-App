@@ -4,20 +4,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConfirmOrder extends AppCompatActivity {
     RecyclerView rv;
-
+    Dialog progressDialog;
+    Database db;
+    boolean flag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_order);
         rv = findViewById(R.id.confirm_order_rv);
 
+        if (Build.VERSION.SDK_INT > 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
 
         List<SelectedItem> list;
 
@@ -27,6 +41,51 @@ public class ConfirmOrder extends AppCompatActivity {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ConfirmOrder.this);
             rv.setLayoutManager(linearLayoutManager);
             rv.setAdapter(ad);
+
+            findViewById(R.id.confirm_order_confirm_tv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AsyncTask asyncTask = new AsyncTask() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            db = new Database(Dashboard.email);
+                            progressDialog = new Dialog(ConfirmOrder.this);
+                            progressDialog.setContentView(R.layout.loading_dialog);
+                            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
+                        }
+
+                        @Override
+                        protected Object doInBackground(Object[] objects) {
+                            flag= db.placeOrder(Dashboard.order);
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            super.onPostExecute(o);
+                            progressDialog.dismiss();
+                            if (flag) {
+                                Toast.makeText(getApplication(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(getApplication(), "Order placed failed \n"+db.error, Toast.LENGTH_SHORT).show();
+                            }
+                            finish();
+                        }
+                    }.execute();
+                }
+            });
+            findViewById(R.id.confirm_order_cancel_tv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplication(), "Order cancelled", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
+
         }
 
 

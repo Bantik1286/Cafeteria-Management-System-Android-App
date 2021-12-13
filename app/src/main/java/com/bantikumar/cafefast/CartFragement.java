@@ -1,6 +1,7 @@
 package com.bantikumar.cafefast;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,14 +38,24 @@ public class CartFragement extends Fragment {
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(itemSelectedAdapter);
             placeOrder = v.findViewById(R.id.cart_frag_place_order_btn);
+            placeOrder.setBackgroundColor(Color.parseColor("#C4A484"));
+            placeOrder.setTextColor(Color.WHITE);
+            placeOrder.setClickable(true);
             placeOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Dashboard.order = new OrderClass();
+                    Dashboard.order = new OrderClass(list,Dashboard.email, "I need ASAP", null);
                     startActivity(new Intent(getContext(),ConfirmOrder.class));
                 }
             });
         }
-
+        else{
+            placeOrder = v.findViewById(R.id.cart_frag_place_order_btn);
+            placeOrder.setBackgroundColor(Color.parseColor("#ECEDEF"));
+            placeOrder.setTextColor(Color.BLACK);
+            placeOrder.setClickable(false);
+        }
         return v;
     }
 }

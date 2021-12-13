@@ -25,6 +25,7 @@ public class Order extends AppCompatActivity {
     String email;
     Dialog progressDialog;
     boolean flag;
+    public static OrderClass orderDetail = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
