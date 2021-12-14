@@ -378,7 +378,7 @@ public class Database {
 
 
     public boolean updateCartItem(int item_id,int qty){
-        String query = "update  cart set qty = "+String.valueOf(qty)+" where item_id = "+String.valueOf(item_id)+" and email = '"+email+"';";
+        String query = "update  cart set qty = "+String.valueOf(qty)+" where item_id = "+String.valueOf(item_id)+" and email = '"+Dashboard.email+"';";
         if(isInternetAvailable()){
             if(connect()){
                 try {
@@ -401,7 +401,7 @@ public class Database {
     }
 
     public boolean deleteItemFromCart(int item_id){
-        String query = "delete from cart where email = '"+email+"' and item_id = "+String.valueOf(item_id)+";";
+        String query = "delete from cart where email = '"+Dashboard.email+"' and item_id = "+String.valueOf(item_id)+";";
         if(isInternetAvailable()){
             if(connect()){
                 try {

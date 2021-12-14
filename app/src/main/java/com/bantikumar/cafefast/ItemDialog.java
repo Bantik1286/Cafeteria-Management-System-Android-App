@@ -120,7 +120,7 @@ public class ItemDialog extends DialogFragment {
             }
         });
         if(inCart){
-
+            flag = false;
             addToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -214,7 +214,7 @@ public class ItemDialog extends DialogFragment {
                 public void onClick(View view) {
                     if (qty.getText().toString().equals("0")) {
                         // TODO: Use toast here
-                        Toast.makeText(getActivity(), "Please complete required data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Please select quantity of item", Toast.LENGTH_SHORT).show();
                     } else {
                         try {
                             new AsyncTask() {
