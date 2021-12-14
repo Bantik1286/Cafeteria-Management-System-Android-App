@@ -31,7 +31,7 @@ public class CartFragement extends Fragment {
         List<SelectedItem> list;
 
         if(Database.cartItems!=null && Database.cartItems.size()>0){
-            list = new ArrayList<>(Database.cartItems);
+            list = Database.cartItems;
             recyclerView = v.findViewById(R.id.cart_recycler_view);
             itemSelectedAdapter = new ItemSelectedAdapter(getContext(),list);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

@@ -322,11 +322,11 @@ public class Database {
                     }
 
                     for(OrderClass order : orders){
-                        String query1 = "select * from order_items where order_id = "+String.valueOf(order.getOrderId())+";";
+                        String query1 = "select order_items.item_id, iname ,item.price, qty from order_items inner join item on item.item_id = order_items.item_id  where order_id = "+String.valueOf(order.getOrderId())+";";
                         rs = st.executeQuery(query1);
                         List<SelectedItem> items = new ArrayList<>();
                         while(rs.next()){
-                            items.add(new SelectedItem(new Item(rs.getInt("item_id"),(double)rs.getInt("price")),rs.getInt("qty")));
+                            items.add(new SelectedItem(new Item(rs.getInt("item_id"),(double)rs.getInt("price"),rs.getString("iname")),rs.getInt("qty")));
                         }
                         order.setItems(items);
                         rs.close();
@@ -375,5 +375,54 @@ public class Database {
             return false;
         }
     }
+
+
+    public boolean updateCartItem(int item_id,int qty){
+        String query = "update  cart set qty = "+String.valueOf(qty)+" where item_id = "+String.valueOf(item_id)+" and email = '"+email+"';";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    public boolean deleteItemFromCart(int item_id){
+        String query = "delete from cart where email = '"+email+"' and item_id = "+String.valueOf(item_id)+";";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+
 
 }

@@ -49,7 +49,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
             holder.status.setText("Ready");
             holder.status.setTextColor(Color.parseColor("#90EE90"));
         }
-        holder.total_amount.setText(String.valueOf(orders.get(position).getTotalAmount()));
+        holder.total_amount.setText("Rs. "+String.valueOf(orders.get(position).getTotalAmount()));
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

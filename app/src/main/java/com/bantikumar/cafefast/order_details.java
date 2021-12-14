@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 public class order_details extends AppCompatActivity {
-
     TextView order_id,totalAmount,status,description;
     RecyclerView recyclerView;
     Toolbar toolbar;
@@ -36,7 +35,7 @@ public class order_details extends AppCompatActivity {
 
 
             order_id.setText("#"+String.valueOf(Order.orderDetail.getOrderId()));
-            totalAmount.setText(String.valueOf(Order.orderDetail.getTotalAmount()));
+            totalAmount.setText("Rs. "+String.valueOf(Order.orderDetail.getTotalAmount()));
             if(Order.orderDetail.getStatus() == 'I') {
                 status.setText("In progress");
             }
