@@ -1,5 +1,10 @@
 package com.bantikumar.cafefast;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +26,19 @@ public class UnavailableItemsDialog extends DialogFragment {
 
     Button yes, no;
     RecyclerView rv;
-    public static List<SelectedItem> unavailable = null;
+    Dialog progressDialog;
+    Database db;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.unavailabe_items_layout,container,false);
-        if(unavailable!=null) {
+        if(ConfirmOrder.unavailable!=null) {
             setCancelable(false);
             no = v.findViewById(R.id.unvailable_item_layout_no);
             yes = v.findViewById(R.id.unvailable_item_layout_yes);
             rv = v.findViewById(R.id.unvailable_item_layout_rv);
-            ConfirmOrderAdapter ad = new ConfirmOrderAdapter(unavailable);
+            ConfirmOrderAdapter ad = new ConfirmOrderAdapter(ConfirmOrder.unavailable);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
             rv.setLayoutManager(linearLayoutManager);
             rv.setAdapter(ad);
@@ -40,7 +46,64 @@ public class UnavailableItemsDialog extends DialogFragment {
             yes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getActivity(), "Yes clicked", Toast.LENGTH_SHORT).show();
+                    for(int i=0;i<ConfirmOrder.unavailable.size();i++){
+                        for(int j=0;j<Dashboard.order.getItems().size();){
+                            if(Dashboard.order.getItems().get(j).getItem().getItemId()==ConfirmOrder.unavailable.get(i).getItem().getItemId())
+                                Dashboard.order.getItems().remove(j);
+                            else
+                                j++;
+                        }
+                    }
+
+                    AsyncTask asyncTask = new AsyncTask() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            db = new Database(Dashboard.email);
+                            progressDialog = new Dialog(getContext());
+                            progressDialog.setContentView(R.layout.loading_dialog);
+                            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
+                        }
+
+                        @Override
+                        protected Object doInBackground(Object[] objects) {
+                            ConfirmOrder.unavailable = db.placeOrderTransaction(Dashboard.order);
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            super.onPostExecute(o);
+                            progressDialog.dismiss();
+                            if (ConfirmOrder.unavailable == null) {
+                                Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
+                                Intent intent  = new Intent(getActivity(),Dashboard.class);
+                                intent.putExtra("EMAIL",Dashboard.email);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+                            else{
+                                if(ConfirmOrder.unavailable.size()==0)
+                                    Toast.makeText(getContext(), db.error, Toast.LENGTH_SHORT).show();
+                                else{
+
+                                    UnavailableItemsDialog i = new UnavailableItemsDialog();
+                                    i.show(getParentFragmentManager(), "Tag");
+                                    dismiss();
+                                    //Toast.makeText(getApplication(), String.valueOf(unavailable.size()), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            dismiss();
+                        }
+                    }.execute();
+
+
+
+
+                    Toast.makeText(getActivity(), String.valueOf(Dashboard.order.getItems().size()), Toast.LENGTH_SHORT).show();
                 }
             });
             no.setOnClickListener(new View.OnClickListener() {

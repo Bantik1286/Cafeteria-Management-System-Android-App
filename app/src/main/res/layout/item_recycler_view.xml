@@ -37,29 +37,15 @@
             android:textSize="20dp"
             android:id="@+id/item_title_tv"
             />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:gravity="right"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/favourite_icon"
-                android:layout_margin="3dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_favourites"
-                app:tint="#ECEDEF"
-                android:backgroundTintMode="screen"
-                />
         <ImageView
-            android:id="@+id/info_icon_item_rv"
+            android:id="@+id/favourite_icon"
             android:layout_margin="3dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_info_24"
-            app:tint="#696969"
+            android:src="@drawable/ic_favourites"
+            app:tint="#ECEDEF"
+            android:backgroundTintMode="screen"
             />
-        </LinearLayout>
     </LinearLayout>
         <LinearLayout
             android:id="@+id/desciption_layout_item_rv"

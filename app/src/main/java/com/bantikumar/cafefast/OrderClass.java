@@ -1,5 +1,6 @@
 package com.bantikumar.cafefast;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -10,9 +11,9 @@ public class OrderClass {
     private String requirement;
     private String completedBy;
     private char status;
-    private Date start_date;
+    private java.sql.Timestamp start_date;
 
-    public OrderClass(int orderId, List<SelectedItem> items, String placeBy, String requirement, String completedBy, char status, Date start_date) {
+    public OrderClass(int orderId, List<SelectedItem> items, String placeBy, String requirement, String completedBy, char status, java.sql.Timestamp start_date) {
         this.orderId = orderId;
         this.items = items;
         this.placeBy = placeBy;
@@ -20,22 +21,25 @@ public class OrderClass {
         this.completedBy = completedBy;
         this.status = status;
         this.start_date = start_date;
+        this.start_date = new Timestamp(new Date().getTime());
     }
-    public OrderClass(List<SelectedItem> items, String placeBy, String requirement, Date start_date) {
+    public OrderClass(List<SelectedItem> items, String placeBy, String requirement, java.sql.Timestamp start_date) {
         this.items = items;
         this.placeBy = placeBy;
         this.requirement = requirement;
         this.start_date = start_date;
         status='I';
+        this.start_date = new Timestamp(new Date().getTime());
     }
 
-    public OrderClass(int orderId, String placeBy, String requirement, String completedBy, char status, Date start_date){
+    public OrderClass(int orderId, String placeBy, String requirement, String completedBy, char status, java.sql.Timestamp start_date){
         this.orderId = orderId;
         this.placeBy = placeBy;
         this.requirement = requirement;
         this.completedBy = completedBy;
         this.status = status;
         this.start_date = start_date;
+        //this.start_date = new Timestamp(new Date().getTime());
     }
 
         public int getOrderId() {
@@ -87,11 +91,11 @@ public class OrderClass {
     }
 
 
-    public Date getStart_date() {
+    public java.sql.Timestamp getStart_date() {
         return start_date;
     }
 
-    public void setStart_date(Date start_date) {
+    public void setStart_date(java.sql.Timestamp start_date) {
         this.start_date = start_date;
     }
 

@@ -4,6 +4,7 @@ import static androidx.core.content.ContextCompat.getSystemService;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.net.InetAddress;
@@ -13,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -156,7 +158,7 @@ public class Database {
         List<Integer> favouriteItems=null;
         if(isInternetAvailable()){
             if(connect()){
-                String query = "select I.item_id, iname, available_qty, rating, price, email from item  I left join favourite_item  F on I.item_id = F.item_id  where email = '"+Dashboard.email+"' or email is null order by iname;";
+                String query = "select I.item_id, iname, available_qty, price, email from item  I left join favourite_item  F on I.item_id = F.item_id order by iname;";
                 try {
                     connection.setAutoCommit(true);
                     st = connection.createStatement();
@@ -164,7 +166,10 @@ public class Database {
                     items = new ArrayList<>();
                     while (resultSet.next())
                     {
-                        items.add(new Item(resultSet.getInt("item_id"),resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),null,resultSet.getString("email")!=null));
+                        if(resultSet.getString("email")!=null)
+                        items.add(new Item(resultSet.getInt("item_id"),resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),null,resultSet.getString("email").equals(Dashboard.email.toString())));
+                        else
+                            items.add(new Item(resultSet.getInt("item_id"),resultSet.getString("iname"),"Default Decription",(double)resultSet.getInt("price"),resultSet.getInt("available_qty"),null,false));
                     }
                     resultSet.close();
                     for(Item item : items){
@@ -313,9 +318,11 @@ public class Database {
     }
 
     public List<SelectedItem> placeOrderTransaction(OrderClass orderClass){
+        java.util.Date dateJ = new java.util.Date();
+        java.sql.Timestamp sqlTime=new java.sql.Timestamp(dateJ.getTime());
         List<SelectedItem> unavaileAbleItems = null;
-        String insertOrderTupple = "insert into orders (description,status," +       // TODO : Insert Date
-                "total_price,placed_by) values ('" +
+        String insertOrderTupple = "insert into orders (start_date,description,status," +       // TODO : Insert Date
+                "total_price,placed_by) values ('"+sqlTime+"','" +
                 orderClass.getRequirement() +"','"+orderClass.getStatus()+"',"+String.valueOf(orderClass.getTotalAmount())+",'"+orderClass.getPlaceBy()+"');";
         if(isInternetAvailable()){
             if(connect()){
@@ -339,6 +346,12 @@ public class Database {
                             String insertItems = "insert into order_items (order_id,item_id,qty,price) VALUES (" + String.valueOf(id) + "," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + "," + String.valueOf(item.getItem().getPrice()) + ");";
                             st.executeUpdate(insertItems);
                         }
+
+                        if(CartFragement.cartOrder){
+                            String q = "delete from cart where email = '"+Dashboard.email+"';";
+                            st.executeUpdate(q);
+                        }
+
                         connection.commit();
                         st.close();
                         connection.close();
@@ -414,11 +427,12 @@ public class Database {
                     orders = new ArrayList<OrderClass>();
                     ResultSet rs = st.executeQuery(query);
                     while(rs.next()){
+                        Timestamp timestamp =rs.getTimestamp("start_date");
                         char status = rs.getString("status").charAt(0);
                         if(status=='R')
-                            orders.add(0,new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,null));
+                            orders.add(0,new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,rs.getTimestamp("start_date")));
                         else
-                        orders.add(new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,null));
+                        orders.add(new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,rs.getTimestamp("start_date")));
                     }
 
                     for(OrderClass order : orders){

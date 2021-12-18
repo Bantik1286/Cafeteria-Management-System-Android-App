@@ -22,14 +22,14 @@ public class CartFragement extends Fragment {
     Button placeOrder;
     RecyclerView recyclerView;
     public static ItemSelectedAdapter itemSelectedAdapter;
+    public static boolean cartOrder;
+    public static List<SelectedItem> list;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.cart_frag_layout,container,false);
-
-        List<SelectedItem> list;
-
+        cartOrder = false;
         if(Database.cartItems!=null && Database.cartItems.size()>0){
             list = Database.cartItems;
             recyclerView = v.findViewById(R.id.cart_recycler_view);
@@ -46,6 +46,7 @@ public class CartFragement extends Fragment {
                 public void onClick(View view) {
                     Dashboard.order = new OrderClass();
                     Dashboard.order = new OrderClass(list,Dashboard.email, "I need ASAP", null);
+                    cartOrder = true;
                     startActivity(new Intent(getContext(),ConfirmOrder.class));
 
                 }

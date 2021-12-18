@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,14 +23,15 @@ public class ConfirmOrder extends AppCompatActivity {
     RecyclerView rv;
     Dialog progressDialog;
     Database db;
+    TextView tv;
     boolean flag;
-    List<SelectedItem> unavailable;
+    public static List<SelectedItem> unavailable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_order);
         rv = findViewById(R.id.confirm_order_rv);
-
+        tv = findViewById(R.id.confirm_order_total_price);
         if (Build.VERSION.SDK_INT > 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -38,6 +41,11 @@ public class ConfirmOrder extends AppCompatActivity {
 
         if(Dashboard.order!=null  && Dashboard.order.getItems()!=null && Dashboard.order.getItems().size()>0){
             list = new ArrayList<>(Dashboard.order.getItems());
+
+            double total =0 ;
+            for(SelectedItem item : list)
+                total+= item.getTotalPrice();
+            tv.setText("Total amount : Rs. " + String.valueOf(total));
             ConfirmOrderAdapter ad = new ConfirmOrderAdapter(list);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ConfirmOrder.this);
             rv.setLayoutManager(linearLayoutManager);
@@ -69,19 +77,30 @@ public class ConfirmOrder extends AppCompatActivity {
                             super.onPostExecute(o);
                             progressDialog.dismiss();
                             if (unavailable == null) {
+                                if(CartFragement.cartOrder){
+                                    CartFragement.cartOrder = false;
+                                    CartFragement.list = null;
+                                    CartFragement.itemSelectedAdapter.notifyDataSetChanged();
+                                }
+                                Intent intent  = new Intent(ConfirmOrder.this,Dashboard.class);
+                                intent.putExtra("EMAIL",Dashboard.email);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
                                 Toast.makeText(getApplication(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 if(unavailable.size()==0)
                                 Toast.makeText(getApplication(), db.error, Toast.LENGTH_SHORT).show();
+                                else if(unavailable.size()==Dashboard.order.getItems().size()){
+                                    Toast.makeText(ConfirmOrder.this,"Unavailable item(s) in stock",Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
                                 else{
-                                    UnavailableItemsDialog.unavailable = unavailable;
                                     UnavailableItemsDialog i = new UnavailableItemsDialog();
                                     i.show(getSupportFragmentManager(), "Tag");
-                                    //Toast.makeText(getApplication(), String.valueOf(unavailable.size()), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            //finish();
                         }
                     }.execute();
                 }
@@ -95,8 +114,6 @@ public class ConfirmOrder extends AppCompatActivity {
             });
 
         }
-
-
 
 
     }

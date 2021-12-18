@@ -126,6 +126,7 @@ public class Dashboard extends AppCompatActivity {
         navigationView = findViewById(R.id.nav);
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
+        CartFragement.cartOrder=false;
         drawerLayout = findViewById(R.id.drawer);
         fullname = navigationView.getHeaderView(0).findViewById(R.id.full_name_drawer_header);
         if(student !=null)

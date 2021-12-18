@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,8 +27,9 @@ import java.util.List;
 public class ItemDialog extends DialogFragment {
 
 
-    TextView itemName,itemPrice,qty;
-    TextInputLayout requirement;
+    TextView itemName,itemPrice;
+    EditText qty;
+    //TextInputLayout requirement;
     Button plus,minus,addToCart,placeOrder;
     ImageView crossImg;
     SelectedItem selectedItem;
@@ -46,7 +48,7 @@ public class ItemDialog extends DialogFragment {
         itemName = v.findViewById(R.id.item_dialog_item_name);
         itemPrice = v.findViewById(R.id.item_dialog_item_price);
         qty = v.findViewById(R.id.item_dialog_qty_tv);
-        requirement = v.findViewById(R.id.item_dialog_item_requirement_input_layout);
+        //requirement = v.findViewById(R.id.item_dialog_item_requirement_input_layout);
         plus =(Button) v.findViewById(R.id.item_dialog_plus_button);
         minus = (Button) v.findViewById(R.id.item_dialog_neg_button);
         addToCart = v.findViewById(R.id.item_dialog_cart_btn);
@@ -113,7 +115,7 @@ public class ItemDialog extends DialogFragment {
                     list = new ArrayList<>();
                     list.add(selectedItem);
                     Date date = new Date();
-                    Dashboard.order = new OrderClass(list, arg.getString("EMAIL"), "I need ASAP", date);
+                    Dashboard.order = new OrderClass(list, arg.getString("EMAIL"), "I need ASAP",null);
                     startActivity(new Intent(getActivity(),ConfirmOrder.class));
                     dismiss();
                 }

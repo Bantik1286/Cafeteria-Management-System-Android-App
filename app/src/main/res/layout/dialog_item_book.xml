@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
 
     android:padding="20dp"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <LinearLayout
+        android:layout_gravity="center"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:weightSum="1"
@@ -78,14 +79,13 @@
             android:textColor="@color/white"
             android:background="@color/brown"
             />
-
-
-        <TextView
+        <EditText
             android:id="@+id/item_dialog_qty_tv"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="0"
             android:gravity="center"
+            android:inputType="number"
             android:textStyle="bold"
             android:textSize="20dp"
             />
@@ -99,19 +99,9 @@
             />
 
     </LinearLayout>
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/item_dialog_item_requirement_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        >
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Additional requirement (Optional)"
-            android:background="@color/white"/>
-    </com.google.android.material.textfield.TextInputLayout>
-    <LinearLayout
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
@@ -33,6 +34,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         int i = position;
         holder.order_id.setText(String.valueOf(orders.get(position).getOrderId()));
+        if(orders.get(position).getStart_date()!=null){
+            String s = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format((orders.get(position).getStart_date()));
+            holder.dateAndTime.setText(s);
+        }
+        else
+            holder.dateAndTime.setText("sd");
         if(orders.get(position).getStatus()=='C'){
             holder.status.setText("Completed");
             holder.status.setTextColor(Color.parseColor("#228B22"));
@@ -61,8 +68,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
                     Toast.makeText(context, "No items found for this order", Toast.LENGTH_SHORT).show();
             }
         });
-
-        // TODO: Date waaro
     }
 
     @Override
