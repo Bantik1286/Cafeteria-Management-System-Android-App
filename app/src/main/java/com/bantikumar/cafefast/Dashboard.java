@@ -42,7 +42,8 @@ public class Dashboard extends AppCompatActivity {
     DrawerLayout drawerLayout;
     BottomNavigationView bottomNavigationView;
     Fragment fragment=null;
-    TextView fullname;
+    public static TextView fullname;
+    public static Student student = null;
     Bundle bundle;
     public static List<Item> itemList;
     Dialog progressDialog;
@@ -97,7 +98,6 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
         bundle = getIntent().getExtras();
         email = bundle.getString("EMAIL");
         bottomNavigationView = findViewById(R.id.bottom_nav);
@@ -128,7 +128,10 @@ public class Dashboard extends AppCompatActivity {
         setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.drawer);
         fullname = navigationView.getHeaderView(0).findViewById(R.id.full_name_drawer_header);
-        fullname.setText(bundle.getString("FIRST_NAME") + " "+bundle.getString("LAST_NAME"));
+        if(student !=null)
+         fullname.setText(student.getFirstname() + " "+student.getLastname());
+        else
+            fullname.setText("-----");
         toggle = new ActionBarDrawerToggle(Dashboard.this,drawerLayout,toolbar,R.string.open,R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -141,8 +144,6 @@ public class Dashboard extends AppCompatActivity {
                         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
                         SharedPreferences.Editor editor = pref.edit();
                         editor.remove("EMAIL");
-                        editor.remove("FIRST_NAME");
-                        editor.remove("LAST_NAME");
                         editor.commit();
                         Intent i = new Intent(Dashboard.this,MainActivity.class);
                         startActivity(i);
@@ -170,8 +171,6 @@ public class Dashboard extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("EMAIL", bundle.getString("EMAIL"));
-        editor.putString("FIRST_NAME",bundle.getString("FIRST_NAME"));
-        editor.putString("LAST_NAME",bundle.getString("LAST_NAME"));
         editor.commit();
 
         db=new Database(bundle.getString("EMAIL"));
@@ -180,7 +179,7 @@ public class Dashboard extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-
+                student = null;
                 progressDialog = new Dialog(Dashboard.this);
                 progressDialog.setContentView(R.layout.loading_dialog);
                 progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -190,6 +189,7 @@ public class Dashboard extends AppCompatActivity {
 
             @Override
             protected Object doInBackground(Object[] objects) {
+                student = db.login(bundle.getString("EMAIL"));
                 itemList = db.getAllItems(bundle.getString("EMAIL"));
                 db.getCartItems();
                 return null;
@@ -200,6 +200,8 @@ public class Dashboard extends AppCompatActivity {
                 super.onPostExecute(o);
                     progressDialog.dismiss();
                     fragment = new HomeFragement();
+                    if(student!=null)
+                        fullname.setText(student.getFirstname() + " "+student.getLastname());
                     if (itemList != null)
                         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
                     else

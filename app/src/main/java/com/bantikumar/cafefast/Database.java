@@ -84,6 +84,8 @@ public class Database {
                 String query = "insert into STUDENTS (first_name,last_name,email,password) VALUES  ('" + student.getFirstname() + "','" + student.getLastname() + "','" + student.getEmail() + "','" + student.getPassword() + "');";
                 String queryCheckAvailablity = "select * from STUDENTS where email = '"+student.getEmail().toString()+"';";
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     ResultSet resultSet = st.executeQuery(queryCheckAvailablity);
                     if(resultSet.next()){
                         error = "User already exists";
@@ -110,12 +112,14 @@ public class Database {
 
 
 
-    public Student login(String email, String password){
+    public Student login(String email){
         Student student = null;
         if(isInternetAvailable()){
             if(connect()) {
-                String query = "select * from STUDENTS where email = '"+email+"' and password = '"+password+"';";
+                String query = "select * from STUDENTS where email = '"+email+"';";
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     ResultSet resultSet = st.executeQuery(query);
                     if(resultSet.next()){
                         student = new Student(resultSet.getString("first_name"),resultSet.getString("last_name"),resultSet.getString("email"),resultSet.getString("password"));
@@ -152,9 +156,10 @@ public class Database {
         List<Integer> favouriteItems=null;
         if(isInternetAvailable()){
             if(connect()){
-                String query = "select I.item_id, iname, available_qty, rating, price, email from item  I left join favourite_item  F on I.item_id = F.item_id  where email = '"+email+"' or email is null order by iname;";
+                String query = "select I.item_id, iname, available_qty, rating, price, email from item  I left join favourite_item  F on I.item_id = F.item_id  where email = '"+Dashboard.email+"' or email is null order by iname;";
                 try {
-
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     ResultSet resultSet = st.executeQuery(query);
                     items = new ArrayList<>();
                     while (resultSet.next())
@@ -194,6 +199,8 @@ public class Database {
             if(connect()){
                 String query = "insert into favourite_item (email,item_id) values ('"+email+"',"+item_id+");";
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     int n = st.executeUpdate(query);
                     return true;
                 }
@@ -216,6 +223,8 @@ public class Database {
             if(connect()){
                 String query = "delete from favourite_item where email = '"+email+"' and item_id = "+item_id+";";
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     int n = st.executeUpdate(query);
                     st.close();
                     connection.close();
@@ -237,32 +246,8 @@ public class Database {
     }
 
 
-    public boolean addToCart(String email, SelectedItem item) {
-        String query = "insert into cart (email, item_id, qty) values ('" + email + "'," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + ");";
-        if (isInternetAvailable()) {
-            if(connect()){
-                try {
-                    int n = st.executeUpdate(query);
-                     return true;
-                }
-                catch (Exception e){
-                    error = e.getMessage();
-                    return false;
-                }
-            }else {
-                return false;
-            }
-        } else {
-            error = "Internet connection not found";
-            return false;
-        }
-    }
-
-
-
-
-
-    // TODO : Check Availablity of items
+    /*
+       // TODO : Check Availablity of items
     public boolean placeOrder(OrderClass orderClass){
         String insertOrderTupple = "insert into orders (description,status," +       // TODO : Insert Date
                 "total_price,placed_by) values ('" +
@@ -302,6 +287,119 @@ public class Database {
         }
         return false;
     }
+     */
+
+    public boolean addToCart(String email, SelectedItem item) {
+        String query = "insert into cart (email, item_id, qty) values ('" + email + "'," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + ");";
+        if (isInternetAvailable()) {
+            if(connect()){
+                try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
+                    int n = st.executeUpdate(query);
+                     return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        } else {
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    public List<SelectedItem> placeOrderTransaction(OrderClass orderClass){
+        List<SelectedItem> unavaileAbleItems = null;
+        String insertOrderTupple = "insert into orders (description,status," +       // TODO : Insert Date
+                "total_price,placed_by) values ('" +
+                orderClass.getRequirement() +"','"+orderClass.getStatus()+"',"+String.valueOf(orderClass.getTotalAmount())+",'"+orderClass.getPlaceBy()+"');";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    connection.setAutoCommit(false);
+                    st = connection.createStatement();
+                    st.executeUpdate(insertOrderTupple);
+                    String queryOrderId = "select max(order_id) as id from orders where placed_by = '"+orderClass.getPlaceBy()+"';";
+                    ResultSet s = st.executeQuery(queryOrderId);
+                    if(s.next()) {
+                        int id = s.getInt("id");
+                        s.close();
+                        unavaileAbleItems = new ArrayList<>();
+                        for (SelectedItem item : orderClass.getItems()) {
+                            String updateQtyItem = "update item set available_qty = available_qty - "+String.valueOf(item.getQuantity())+" where item_id = "+String.valueOf(item.getItem().getItemId())+";";
+                            st.executeUpdate(updateQtyItem);
+                        }
+                        unavaileAbleItems = null;
+
+                        for (SelectedItem item : orderClass.getItems()) {
+                            String insertItems = "insert into order_items (order_id,item_id,qty,price) VALUES (" + String.valueOf(id) + "," + String.valueOf(item.getItem().getItemId()) + "," + String.valueOf(item.getQuantity()) + "," + String.valueOf(item.getItem().getPrice()) + ");";
+                            st.executeUpdate(insertItems);
+                        }
+                        connection.commit();
+                        st.close();
+                        connection.close();
+                        return null;
+                    }
+                }
+                catch (Exception e){
+                    if(unavaileAbleItems == null) {
+                        error = e.getMessage();
+                        return new ArrayList<>();
+                    }
+                    else{
+                        if(connect()){
+                            try{
+                                ResultSet s;
+                                for (SelectedItem item : orderClass.getItems()) {
+                                    String q = "select item_id from item where available_qty < "+String.valueOf(item.getQuantity())+" and item_id = "+String.valueOf(item.getItem().getItemId())+";";
+                                    s = st.executeQuery(q);
+                                    if(s.next()){
+                                        unavaileAbleItems.add(item);
+                                    }
+                                    s.close();
+                                }
+                                return unavaileAbleItems;
+                            }
+                            catch (Exception w){
+                                return new ArrayList<>();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+                return new ArrayList<>();
+        }
+        else{
+            error = "Internet connection not found";
+            return new ArrayList<>();
+        }
+        return new ArrayList<>();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -311,6 +409,8 @@ public class Database {
         if(isInternetAvailable()){
             if(connect()){
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     orders = new ArrayList<OrderClass>();
                     ResultSet rs = st.executeQuery(query);
                     while(rs.next()){
@@ -353,8 +453,11 @@ public class Database {
         if(isInternetAvailable()){
             cartItems = null;
             if(connect()){
+
                 cartItems = new ArrayList<>();
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     ResultSet rs = st.executeQuery(query);
                     while(rs.next()){
                         cartItems.add(new SelectedItem(new Item(rs.getInt("item_id"),(double)rs.getInt("price"),rs.getString("iname")),rs.getInt("qty")));
@@ -382,6 +485,8 @@ public class Database {
         if(isInternetAvailable()){
             if(connect()){
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     st.executeUpdate(query);
                     return true;
                 }
@@ -405,6 +510,107 @@ public class Database {
         if(isInternetAvailable()){
             if(connect()){
                 try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
+                    st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    public boolean deleteAllCartItem(){
+        String query = "delete from cart where email = '"+Dashboard.email+"';";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
+                    st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    public boolean updateFirstName(String newFirstName){
+        String query = "update students set first_name = '"+newFirstName+"' where email = '"+Dashboard.email+"';";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
+                    st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+    public boolean updateLastName(String newLastName){
+        String query = "update students set last_name = '"+newLastName+"' where email = '"+Dashboard.email+"';";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
+                    st.executeUpdate(query);
+                    return true;
+                }
+                catch (Exception e){
+                    error = e.getMessage();
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            error = "Internet connection not found";
+            return false;
+        }
+    }
+
+    public boolean updatePassword(String newPass){
+        String query = "update students set password = '"+newPass+"' where email = '"+Dashboard.email+"';";
+        if(isInternetAvailable()){
+            if(connect()){
+                try {
+                    connection.setAutoCommit(true);
+                    st = connection.createStatement();
                     st.executeUpdate(query);
                     return true;
                 }

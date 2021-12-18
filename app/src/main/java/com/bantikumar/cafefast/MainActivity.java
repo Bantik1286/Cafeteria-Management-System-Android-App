@@ -35,16 +35,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         String EMAIL = pref.getString("EMAIL",null);
-        String FirstName = pref.getString("FIRST_NAME",null);
-        String LastName = pref.getString("LAST_NAME",null);
+
         // TODO : Put other data share prefference
 
-        if(EMAIL!=null && FirstName!=null && LastName!=null)
+        if(EMAIL!=null)
         {
             Intent intent = new Intent(MainActivity.this, Dashboard.class);
             intent.putExtra("EMAIL", EMAIL.toString());
-            intent.putExtra("FIRST_NAME",FirstName);
-            intent.putExtra("LAST_NAME",LastName);
             startActivity(intent);
             finish();
         }
@@ -72,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 protected Object doInBackground(Object[] objects) {
-                                    student = db.login(email.getEditText().getText().toString(), password.getEditText().getText().toString());
+                                    student = db.login(email.getEditText().getText().toString());
                                     return null;
                                 }
 
@@ -81,15 +78,20 @@ public class MainActivity extends AppCompatActivity {
                                     super.onPostExecute(o);
                                     progressDialog.dismiss();
                                     if (student != null) {
-                            Intent intent = new Intent(MainActivity.this, Dashboard.class);
-                            intent.putExtra("EMAIL", email.getEditText().getText().toString());
-                            intent.putExtra("FIRST_NAME",student.getFirstname());
-                            intent.putExtra("LAST_NAME",student.getLastname());
-                            Toast.makeText(MainActivity.this, "Succesfully Login", Toast.LENGTH_SHORT).show();
-                            startActivity(intent);
-                            finish();
+                                        if(student.getPassword().equals(password.getEditText().getText().toString())) {
+                                            password.setErrorEnabled(false);
+                                            Intent intent = new Intent(MainActivity.this, Dashboard.class);
+                                            intent.putExtra("EMAIL", email.getEditText().getText().toString());
+                                            Toast.makeText(MainActivity.this, "Succesfully Login", Toast.LENGTH_SHORT).show();
+                                            startActivity(intent);
+                                        }
+                                        else{
+                                            password.setError("Incorrect password");
+                                            password.setErrorEnabled(true);
+                                        }
                                     } else
                                         Toast.makeText(MainActivity.this, Database.error.toString(), Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }
                             }.execute();
 

@@ -22,6 +22,7 @@ public class ConfirmOrder extends AppCompatActivity {
     Dialog progressDialog;
     Database db;
     boolean flag;
+    List<SelectedItem> unavailable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,7 @@ public class ConfirmOrder extends AppCompatActivity {
 
                         @Override
                         protected Object doInBackground(Object[] objects) {
-                            flag= db.placeOrder(Dashboard.order);
+                            unavailable = db.placeOrderTransaction(Dashboard.order);
                             return null;
                         }
 
@@ -67,13 +68,20 @@ public class ConfirmOrder extends AppCompatActivity {
                         protected void onPostExecute(Object o) {
                             super.onPostExecute(o);
                             progressDialog.dismiss();
-                            if (flag) {
+                            if (unavailable == null) {
                                 Toast.makeText(getApplication(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                             }
                             else{
-                                Toast.makeText(getApplication(), "Order placed failed \n"+db.error, Toast.LENGTH_SHORT).show();
+                                if(unavailable.size()==0)
+                                Toast.makeText(getApplication(), db.error, Toast.LENGTH_SHORT).show();
+                                else{
+                                    UnavailableItemsDialog.unavailable = unavailable;
+                                    UnavailableItemsDialog i = new UnavailableItemsDialog();
+                                    i.show(getSupportFragmentManager(), "Tag");
+                                    //Toast.makeText(getApplication(), String.valueOf(unavailable.size()), Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            finish();
+                            //finish();
                         }
                     }.execute();
                 }

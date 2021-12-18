@@ -47,6 +47,7 @@ public class CartFragement extends Fragment {
                     Dashboard.order = new OrderClass();
                     Dashboard.order = new OrderClass(list,Dashboard.email, "I need ASAP", null);
                     startActivity(new Intent(getContext(),ConfirmOrder.class));
+
                 }
             });
         }

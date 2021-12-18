@@ -73,8 +73,6 @@ public class registration_activity extends AppCompatActivity {
                               if(flag){
                                   Intent intent = new Intent(registration_activity.this,Dashboard.class);
                                   intent.putExtra("EMAIL",email.getEditText().getText().toString());
-                                  intent.putExtra("FIRST_NAME",firstname.getEditText().getText().toString());
-                                  intent.putExtra("LAST_NAME",lastname.getEditText().getText().toString());
                                   startActivity(intent);
                                   finish();
                               }
