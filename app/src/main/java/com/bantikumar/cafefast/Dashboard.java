@@ -162,7 +162,11 @@ public class Dashboard extends AppCompatActivity {
                         startActivity(in2);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         break;
-                    default:
+                    case R.id.order_history_icon:
+                        Intent in3 = new Intent(Dashboard.this,OrderHistory.class);
+                        startActivity(in3);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        default:
                         drawerLayout.closeDrawer(GravityCompat.START);
                 }
                 return true;

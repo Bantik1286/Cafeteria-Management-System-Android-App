@@ -81,9 +81,8 @@ public class UnavailableItemsDialog extends DialogFragment {
                                 Toast.makeText(getContext(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                                 Intent intent  = new Intent(getActivity(),Dashboard.class);
                                 intent.putExtra("EMAIL",Dashboard.email);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
                                 startActivity(intent);
-                                getActivity().finish();
                             }
                             else{
                                 if(ConfirmOrder.unavailable.size()==0)
@@ -99,11 +98,6 @@ public class UnavailableItemsDialog extends DialogFragment {
                             dismiss();
                         }
                     }.execute();
-
-
-
-
-                    Toast.makeText(getActivity(), String.valueOf(Dashboard.order.getItems().size()), Toast.LENGTH_SHORT).show();
                 }
             });
             no.setOnClickListener(new View.OnClickListener() {

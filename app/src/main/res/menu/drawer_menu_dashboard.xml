@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/profile_btn_nav"
-        android:title="Profile"
-        android:icon="@drawable/ic_profile"
-        app:showAsAction="ifRoom"
-        />
-    <item android:title="Cart"
-        android:id="@+id/cart_icon_drawer"
-        android:icon="@drawable/ic_cart"
-        app:showAsAction="ifRoom"
-        />
+    <item android:title="Profile">
+        <menu>
+            <item
+                android:id="@+id/profile_btn_nav"
+                android:title="Profile"
+                android:icon="@drawable/ic_profile"
+                app:showAsAction="ifRoom"
+                />
+        </menu>
+    </item>
 
 
-
-    <item android:title="Order"
-        >
+    <item android:title="Order">
         <menu>
             <item android:title="Track order"
                 android:id="@+id/order_icon_drawer"
@@ -26,6 +22,7 @@
             <item android:title="Order history"
                 android:icon="@drawable/ic_baseline_history_24"
                 app:showAsAction="ifRoom"
+                android:id="@+id/order_history_icon"
                 />
         </menu>
     </item>

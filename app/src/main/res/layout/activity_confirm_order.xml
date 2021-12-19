@@ -45,7 +45,7 @@
         >
         <LinearLayout
             android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
@@ -56,6 +56,7 @@
                 android:src="@drawable/coffee_logo"
                 />
             <TextView
+                android:gravity="center"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center"
                 android:textSize="18dp"
@@ -63,6 +64,8 @@
                 android:text="Cafe Fast"
                 android:layout_height="wrap_content"/>
             <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:id="@+id/confirm_order_total_price"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"
@@ -71,8 +74,20 @@
                 android:layout_width="wrap_content"
                 android:text="Total Amout : Rs.340"
                 android:layout_height="wrap_content"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/activity_confirm_order_requirement"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/stroke_tv"
+                    android:hint="Enter requirement (if any)"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginTop="20dp"

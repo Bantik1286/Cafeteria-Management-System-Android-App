@@ -46,9 +46,10 @@ public class updateNameDialog extends DialogFragment {
         cancel = v.findViewById(R.id.update_name_dilog_cancel_btn);
         editor = v.findViewById(R.id.update_name_dilog_input_layout);
         editor.getEditText().setText(oldName);
-
-
-
+        if(updateName=='l')
+            editor.setHint("Last name");
+        if(updateName=='f')
+            editor.setHint("First name");
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

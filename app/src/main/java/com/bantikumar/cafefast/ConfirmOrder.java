@@ -13,8 +13,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,7 @@ public class ConfirmOrder extends AppCompatActivity {
     Dialog progressDialog;
     Database db;
     TextView tv;
+    TextInputLayout req;
     boolean flag;
     public static List<SelectedItem> unavailable;
     @Override
@@ -32,6 +36,8 @@ public class ConfirmOrder extends AppCompatActivity {
         setContentView(R.layout.activity_confirm_order);
         rv = findViewById(R.id.confirm_order_rv);
         tv = findViewById(R.id.confirm_order_total_price);
+        req = findViewById(R.id.activity_confirm_order_requirement);
+
         if (Build.VERSION.SDK_INT > 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -58,6 +64,10 @@ public class ConfirmOrder extends AppCompatActivity {
                         @Override
                         protected void onPreExecute() {
                             super.onPreExecute();
+                            if(req.getEditText().getText().toString().isEmpty())
+                                Dashboard.order.setRequirement("No requirements");
+                            else
+                                Dashboard.order.setRequirement(req.getEditText().getText().toString());
                             db = new Database(Dashboard.email);
                             progressDialog = new Dialog(ConfirmOrder.this);
                             progressDialog.setContentView(R.layout.loading_dialog);
@@ -77,6 +87,7 @@ public class ConfirmOrder extends AppCompatActivity {
                             super.onPostExecute(o);
                             progressDialog.dismiss();
                             if (unavailable == null) {
+                                Toast.makeText(getApplication(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                                 if(CartFragement.cartOrder){
                                     CartFragement.cartOrder = false;
                                     CartFragement.list = null;
@@ -84,10 +95,8 @@ public class ConfirmOrder extends AppCompatActivity {
                                 }
                                 Intent intent  = new Intent(ConfirmOrder.this,Dashboard.class);
                                 intent.putExtra("EMAIL",Dashboard.email);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
                                 startActivity(intent);
-                                finish();
-                                Toast.makeText(getApplication(), "Order placed Successfully", Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 if(unavailable.size()==0)
