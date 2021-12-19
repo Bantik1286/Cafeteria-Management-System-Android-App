@@ -45,7 +45,7 @@
                 android:checked="false"
                 android:gravity="center"
                 android:layout_weight="0.5"
-                android:text="Hisotry"
+                android:text="Completed"
                 android:textColor="@drawable/text_color_selector"
                 android:textSize="16sp"
                 android:textStyle="bold"

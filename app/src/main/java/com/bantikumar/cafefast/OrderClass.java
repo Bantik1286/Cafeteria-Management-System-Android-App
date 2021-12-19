@@ -9,16 +9,14 @@ public class OrderClass {
     private List<SelectedItem> items;
     private String placeBy;
     private String requirement;
-    private String completedBy;
     private char status;
     private java.sql.Timestamp start_date;
 
-    public OrderClass(int orderId, List<SelectedItem> items, String placeBy, String requirement, String completedBy, char status, java.sql.Timestamp start_date) {
+    public OrderClass(int orderId, List<SelectedItem> items, String placeBy, String requirement, char status, java.sql.Timestamp start_date) {
         this.orderId = orderId;
         this.items = items;
         this.placeBy = placeBy;
         this.requirement = requirement;
-        this.completedBy = completedBy;
         this.status = status;
         this.start_date = start_date;
         this.start_date = new Timestamp(new Date().getTime());
@@ -32,14 +30,12 @@ public class OrderClass {
         this.start_date = new Timestamp(new Date().getTime());
     }
 
-    public OrderClass(int orderId, String placeBy, String requirement, String completedBy, char status, java.sql.Timestamp start_date){
+    public OrderClass(int orderId, String placeBy, String requirement, char status, java.sql.Timestamp start_date){
         this.orderId = orderId;
         this.placeBy = placeBy;
         this.requirement = requirement;
-        this.completedBy = completedBy;
         this.status = status;
         this.start_date = start_date;
-        //this.start_date = new Timestamp(new Date().getTime());
     }
 
         public int getOrderId() {
@@ -72,14 +68,6 @@ public class OrderClass {
 
     public void setRequirement(String requirement) {
         this.requirement = requirement;
-    }
-
-    public String getCompletedBy() {
-        return completedBy;
-    }
-
-    public void setCompletedBy(String completedBy) {
-        this.completedBy = completedBy;
     }
 
     public char getStatus() {

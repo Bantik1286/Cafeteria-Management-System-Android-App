@@ -430,9 +430,9 @@ public class Database {
                         Timestamp timestamp =rs.getTimestamp("start_date");
                         char status = rs.getString("status").charAt(0);
                         if(status=='R')
-                            orders.add(0,new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,rs.getTimestamp("start_date")));
+                            orders.add(0,new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),status,rs.getTimestamp("start_date")));
                         else
-                        orders.add(new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),rs.getString("completed_by"),status,rs.getTimestamp("start_date")));
+                        orders.add(new OrderClass(rs.getInt("order_id"),rs.getString("placed_by"),rs.getString("description"),status,rs.getTimestamp("start_date")));
                     }
 
                     for(OrderClass order : orders){
